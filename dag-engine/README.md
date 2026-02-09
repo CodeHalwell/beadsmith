@@ -1,6 +1,6 @@
-# Cline+ DAG Analysis Engine
+# Beadsmith DAG Analysis Engine
 
-Dependency graph analysis engine for the Cline+ (Beadsmith) VS Code extension.
+Dependency graph analysis engine for the Beadsmith VS Code extension.
 
 ## Overview
 
@@ -34,7 +34,7 @@ pip install -e ".[dev]"
 ### As a Server (for VS Code extension)
 
 ```bash
-python -m cline_dag.server
+python -m beadsmith_dag.server
 ```
 
 The server reads JSON-RPC 2.0 requests from stdin and writes responses to stdout.
@@ -43,7 +43,7 @@ The server reads JSON-RPC 2.0 requests from stdin and writes responses to stdout
 
 ```python
 from pathlib import Path
-from cline_dag.analyser import ProjectAnalyser
+from beadsmith_dag.analyser import ProjectAnalyser
 
 # Create analyser
 analyser = ProjectAnalyser()
@@ -78,19 +78,19 @@ print(f"Suggested tests: {impact.suggested_tests}")
 pytest
 
 # Run tests with coverage
-pytest --cov=cline_dag --cov-report=html
+pytest --cov=beadsmith_dag --cov-report=html
 
 # Lint
 ruff check .
 
 # Type check
-mypy cline_dag
+mypy beadsmith_dag
 ```
 
 ## Architecture
 
 ```
-cline_dag/
+beadsmith_dag/
 ├── __init__.py
 ├── models.py         # Pydantic models (mirroring TypeScript types)
 ├── analyser.py       # Main ProjectAnalyser coordinating all components

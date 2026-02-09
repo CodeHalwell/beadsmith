@@ -120,8 +120,8 @@
 							{
 								"group": "Beadsmith Rules",
 								"pages": [
-									"features/cline-rules/overview",
-									"features/cline-rules/conditional-rules"
+									"features/beadsmith-rules/overview",
+									"features/beadsmith-rules/conditional-rules"
 								]
 							},
 							{
@@ -264,9 +264,9 @@
 					{
 						"group": "Beadsmith Tools Reference",
 						"pages": [
-							"exploring-clines-tools/cline-tools-guide",
-							"exploring-clines-tools/new-task-tool",
-							"exploring-clines-tools/remote-browser-support"
+							"exploring-beadsmiths-tools/beadsmith-tools-guide",
+							"exploring-beadsmiths-tools/new-task-tool",
+							"exploring-beadsmiths-tools/remote-browser-support"
 						]
 					},
 					{
@@ -322,7 +322,7 @@
 							{
 								"group": "Control Other Beadsmith Features",
 								"pages": [
-									"enterprise-solutions/configuration/infrastructure-configuration/control-other-cline-features/yolo-mode"
+									"enterprise-solutions/configuration/infrastructure-configuration/control-other-beadsmith-features/yolo-mode"
 								]
 							},
 							{

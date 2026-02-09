@@ -2,10 +2,10 @@
 	"name": "beadsmith",
 	"version": "1.0.10",
 	"description": "Autonomous coding agent CLI - capable of creating/editing files, running commands, using the browser, and more",
-	"main": "cline-core.js",
+	"main": "beadsmith-core.js",
 	"bin": {
-		"beadsmith": "./bin/cline",
-		"cline-host": "./bin/cline-host"
+		"beadsmith": "./bin/beadsmith",
+		"beadsmith-host": "./bin/beadsmith-host"
 	},
 	"man": "./man/beadsmith.1",
 	"scripts": {

@@ -47,7 +47,7 @@ func (m *Manager) GetCurrentInstance() string {
 	return m.clientAddress
 }
 
-func (m *Manager) UpdateSettings(ctx context.Context, settings *cline.Settings, secrets *cline.Secrets) error {
+func (m *Manager) UpdateSettings(ctx context.Context, settings *beadsmith.Settings, secrets *beadsmith.Secrets) error {
 	request := &beadsmith.UpdateSettingsRequestCli{
 		Metadata: &beadsmith.Metadata{},
 		Settings: settings,
