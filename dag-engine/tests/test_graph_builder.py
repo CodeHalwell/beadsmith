@@ -1,7 +1,6 @@
 """Tests for the GraphBuilder."""
 
 import networkx as nx
-import pytest
 
 from beadsmith_dag.graph.builder import GraphBuilder
 from beadsmith_dag.models import (
