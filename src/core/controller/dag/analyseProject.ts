@@ -62,7 +62,16 @@ export async function analyseProject(controller: Controller, request: AnalysePro
 		const dagBridge = await controller.ensureDagBridge()
 		const workspaceRoot = controller.getWorkspaceManager()?.getPrimaryRoot()?.path
 		const root = request.root || workspaceRoot || ""
-		Logger.info(`[analyseProject] root="${root}", request.root="${request.root}", workspaceRoot="${workspaceRoot}"`)
+
+		// Enhanced logging to help troubleshoot workspace path issues
+		Logger.info(`[analyseProject] Analyzing project at path: "${root}"`)
+		Logger.debug(`[analyseProject] Details: request.root="${request.root}", workspaceRoot="${workspaceRoot}"`)
+
+		if (!root) {
+			Logger.warn("[analyseProject] No workspace root detected - analysis may not work correctly")
+			Logger.warn("[analyseProject] Make sure a folder is open in VS Code")
+		}
+
 		let result = await dagBridge.analyseProject(root)
 
 		// Filter out ignored files from the result

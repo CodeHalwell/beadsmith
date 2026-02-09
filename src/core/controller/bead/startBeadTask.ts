@@ -91,7 +91,13 @@ export async function startBeadTask(controller: Controller, request: StartBeadTa
 		const bead = await beadManager.startTask(request.description, successCriteria)
 		const state = beadManager.getState()
 
-		Logger.info(`[startBeadTask] Started bead task ${state.currentTask?.id} with bead ${bead.id}`)
+		// Enhanced logging to confirm bead creation
+		Logger.info(`[startBeadTask] ✓ Bead task started successfully`)
+		Logger.info(`[startBeadTask] Task ID: ${state.currentTask?.id}`)
+		Logger.info(`[startBeadTask] First bead ID: ${bead.id} (Bead #${bead.beadNumber})`)
+		Logger.debug(
+			`[startBeadTask] Configuration: maxIterations=${request.maxIterations}, tokenBudget=${request.tokenBudget}, testCommand=${request.testCommand || "none"}`,
+		)
 
 		// Notify subscribers about the task start
 		await sendBeadUpdateEvent(

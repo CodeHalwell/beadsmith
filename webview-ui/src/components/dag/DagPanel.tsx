@@ -334,8 +334,17 @@ export const DagPanel = memo<DagPanelProps>(({ className, onDone }) => {
 							<ArrowLeftIcon className="size-4" />
 						</button>
 					)}
-					<GitBranchIcon className="size-4" />
-					<span className="font-medium text-sm">Dependency Graph</span>
+					<div className="flex flex-col">
+						<div className="flex items-center gap-2">
+							<GitBranchIcon className="size-4" />
+							<span className="font-medium text-sm">Dependency Graph</span>
+						</div>
+						{graph?.root && (
+							<span className="text-xs text-muted-foreground ml-6" title={graph.root}>
+								{graph.root.split(/[\\/]/).slice(-2).join("/")}
+							</span>
+						)}
+					</div>
 				</div>
 				<div className="flex items-center gap-2">
 					<StatusIndicator isLoading={isLoading} status={status} />

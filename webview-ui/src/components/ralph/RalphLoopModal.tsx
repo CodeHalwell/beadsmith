@@ -178,6 +178,15 @@ const RalphLoopModal = memo(({ isVisible, onClose, onStart }: RalphLoopModalProp
 				<div className="flex-1 overflow-y-auto p-4">
 					{currentStep === "task" && (
 						<div className="space-y-4">
+							{/* Explanatory introduction */}
+							<div className="bg-link/10 border border-link/30 rounded-sm p-3">
+								<p className="text-sm">
+									<strong>Ralph Loop</strong> (also called "Beads") is an iterative workflow where the AI works
+									in small, checkpointed iterations. Each iteration (bead) is reviewed and approved before
+									continuing, ensuring quality and giving you control at every step.
+								</p>
+							</div>
+
 							<div>
 								<label className="block text-sm font-medium mb-2">What do you want to accomplish?</label>
 								<VSCodeTextArea
