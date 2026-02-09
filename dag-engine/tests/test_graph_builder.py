@@ -255,16 +255,61 @@ class TestGraphBuilder:
         builder = GraphBuilder()
 
         nodes = [
-            GraphNode(id="node1", type=NodeType.FUNCTION, file_path="test.py", line_number=1, name="node1"),
-            GraphNode(id="node2", type=NodeType.FUNCTION, file_path="test.py", line_number=2, name="node2"),
-            GraphNode(id="node3", type=NodeType.FUNCTION, file_path="test.py", line_number=3, name="node3"),
-            GraphNode(id="node4", type=NodeType.FUNCTION, file_path="test.py", line_number=4, name="node4"),
+            GraphNode(
+                id="node1",
+                type=NodeType.FUNCTION,
+                file_path="test.py",
+                line_number=1,
+                name="node1",
+            ),
+            GraphNode(
+                id="node2",
+                type=NodeType.FUNCTION,
+                file_path="test.py",
+                line_number=2,
+                name="node2",
+            ),
+            GraphNode(
+                id="node3",
+                type=NodeType.FUNCTION,
+                file_path="test.py",
+                line_number=3,
+                name="node3",
+            ),
+            GraphNode(
+                id="node4",
+                type=NodeType.FUNCTION,
+                file_path="test.py",
+                line_number=4,
+                name="node4",
+            ),
         ]
 
         edges = [
-            GraphEdge(from_node="node1", to_node="node2", edge_type=EdgeType.CALL, confidence=EdgeConfidence.HIGH, line_number=0, label="test"),
-            GraphEdge(from_node="node1", to_node="node3", edge_type=EdgeType.CALL, confidence=EdgeConfidence.MEDIUM, line_number=0, label="test"),
-            GraphEdge(from_node="node1", to_node="node4", edge_type=EdgeType.CALL, confidence=EdgeConfidence.LOW, line_number=0, label="test"),
+            GraphEdge(
+                from_node="node1",
+                to_node="node2",
+                edge_type=EdgeType.CALL,
+                confidence=EdgeConfidence.HIGH,
+                line_number=0,
+                label="test",
+            ),
+            GraphEdge(
+                from_node="node1",
+                to_node="node3",
+                edge_type=EdgeType.CALL,
+                confidence=EdgeConfidence.MEDIUM,
+                line_number=0,
+                label="test",
+            ),
+            GraphEdge(
+                from_node="node1",
+                to_node="node4",
+                edge_type=EdgeType.CALL,
+                confidence=EdgeConfidence.LOW,
+                line_number=0,
+                label="test",
+            ),
         ]
 
         graph = builder.build(nodes, edges)
