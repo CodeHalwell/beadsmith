@@ -1,31 +1,31 @@
-import { AccountServiceClient } from "@cline-grpc/account"
-import { BrowserServiceClient } from "@cline-grpc/browser"
-import { CheckpointsServiceClient } from "@cline-grpc/checkpoints"
-import { CommandsServiceClient } from "@cline-grpc/commands"
-import { FileServiceClient } from "@cline-grpc/file"
-import { McpServiceClient } from "@cline-grpc/mcp"
-import { ModelsServiceClient } from "@cline-grpc/models"
-import { SlashServiceClient } from "@cline-grpc/slash"
-import { StateServiceClient } from "@cline-grpc/state"
-import { TaskServiceClient } from "@cline-grpc/task"
-import { UiServiceClient } from "@cline-grpc/ui"
-import { WebServiceClient } from "@cline-grpc/web"
+import { AccountServiceClient } from "@beadsmith-grpc/account"
+import { BrowserServiceClient } from "@beadsmith-grpc/browser"
+import { CheckpointsServiceClient } from "@beadsmith-grpc/checkpoints"
+import { CommandsServiceClient } from "@beadsmith-grpc/commands"
+import { FileServiceClient } from "@beadsmith-grpc/file"
+import { McpServiceClient } from "@beadsmith-grpc/mcp"
+import { ModelsServiceClient } from "@beadsmith-grpc/models"
+import { SlashServiceClient } from "@beadsmith-grpc/slash"
+import { StateServiceClient } from "@beadsmith-grpc/state"
+import { TaskServiceClient } from "@beadsmith-grpc/task"
+import { UiServiceClient } from "@beadsmith-grpc/ui"
+import { WebServiceClient } from "@beadsmith-grpc/web"
 import { credentials } from "@grpc/grpc-js"
 import { promisify } from "util"
 
 const serviceRegistry = {
-	"cline.AccountService": AccountServiceClient,
-	"cline.BrowserService": BrowserServiceClient,
-	"cline.CheckpointsService": CheckpointsServiceClient,
-	"cline.CommandsService": CommandsServiceClient,
-	"cline.FileService": FileServiceClient,
-	"cline.McpService": McpServiceClient,
-	"cline.ModelsService": ModelsServiceClient,
-	"cline.SlashService": SlashServiceClient,
-	"cline.StateService": StateServiceClient,
-	"cline.TaskService": TaskServiceClient,
-	"cline.UiService": UiServiceClient,
-	"cline.WebService": WebServiceClient,
+	"beadsmith.AccountService": AccountServiceClient,
+	"beadsmith.BrowserService": BrowserServiceClient,
+	"beadsmith.CheckpointsService": CheckpointsServiceClient,
+	"beadsmith.CommandsService": CommandsServiceClient,
+	"beadsmith.FileService": FileServiceClient,
+	"beadsmith.McpService": McpServiceClient,
+	"beadsmith.ModelsService": ModelsServiceClient,
+	"beadsmith.SlashService": SlashServiceClient,
+	"beadsmith.StateService": StateServiceClient,
+	"beadsmith.TaskService": TaskServiceClient,
+	"beadsmith.UiService": UiServiceClient,
+	"beadsmith.WebService": WebServiceClient,
 } as const
 
 export type ServiceClients = {

@@ -8,7 +8,7 @@ import { BeadsmithDataMock } from "./data"
 
 const E2E_API_SERVER_PORT = 7777
 
-export const MOCK_CLINE_API_SERVER_URL = `http://localhost:${E2E_API_SERVER_PORT}`
+export const MOCK_BEADSMITH_API_SERVER_URL = `http://localhost:${E2E_API_SERVER_PORT}`
 
 const useVerboseLogging = process.env.BEADSMITH_E2E_TESTS_VERBOSE === "true"
 function log(...args: unknown[]) {

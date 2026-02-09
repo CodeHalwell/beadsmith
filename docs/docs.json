@@ -39,12 +39,12 @@
 			{
 				"label": "GitHub",
 				"icon": "github",
-				"href": "https://github.com/cline/cline"
+				"href": "https://github.com/CodeHalwell/beadsmith"
 			},
 			{
 				"label": "Discord",
 				"icon": "discord",
-				"href": "https://discord.gg/cline"
+				"href": "https://discord.gg/beadsmith"
 			}
 		],
 		"primary": {
@@ -69,7 +69,7 @@
 					{
 						"group": "Getting Started",
 						"pages": [
-							"getting-started/installing-cline",
+							"getting-started/installing-beadsmith",
 							"getting-started/selecting-your-model",
 							"getting-started/your-first-project"
 						]
@@ -79,24 +79,24 @@
 						"pages": [
 							"prompting/understanding-context-management",
 							"prompting/prompt-engineering-guide",
-							"prompting/cline-memory-bank"
+							"prompting/beadsmith-memory-bank"
 						]
 					},
 					{
 						"group": "CLI",
 						"pages": [
-							"cline-cli/overview",
-							"cline-cli/installation",
-							"cline-cli/three-core-flows",
+							"beadsmith-cli/overview",
+							"beadsmith-cli/installation",
+							"beadsmith-cli/three-core-flows",
 							{
 								"group": "CLI Samples",
 								"pages": [
-									"cline-cli/samples/overview",
-									"cline-cli/samples/github-issue-rca",
-									"cline-cli/samples/github-integration"
+									"beadsmith-cli/samples/overview",
+									"beadsmith-cli/samples/github-issue-rca",
+									"beadsmith-cli/samples/github-integration"
 								]
 							},
-							"cline-cli/cli-reference"
+							"beadsmith-cli/cli-reference"
 						]
 					},
 					{
@@ -137,7 +137,7 @@
 							{
 								"group": "Customization",
 								"pages": [
-									"features/customization/opening-cline-in-sidebar",
+									"features/customization/opening-beadsmith-in-sidebar",
 									"features/customization/disable-terminal-pagers"
 								]
 							},
@@ -239,7 +239,7 @@
 								"group": "Advanced Configuration",
 								"pages": [
 									"provider-config/openai-compatible",
-									"provider-config/litellm-and-cline-using-codestral",
+									"provider-config/litellm-and-beadsmith-using-codestral",
 									"provider-config/vscode-language-model-api",
 									"provider-config/github-copilot-sdk",
 									"provider-config/sap-aicore",
@@ -347,9 +347,9 @@
 	},
 	"footer": {
 		"socials": {
-			"x": "https://x.com/cline",
-			"github": "https://github.com/cline/cline",
-			"discord": "https://discord.gg/cline"
+			"x": "https://x.com/beadsmith",
+			"github": "https://github.com/CodeHalwell/beadsmith",
+			"discord": "https://discord.gg/beadsmith"
 		}
 	},
 	"anchors": [
@@ -362,7 +362,7 @@
 	"redirects": [
 		{
 			"source": "/getting-started/installing-cline-jetbrains",
-			"destination": "/getting-started/installing-cline"
+			"destination": "/getting-started/installing-beadsmith"
 		},
 		{
 			"source": "/getting-started/what-is-cline",
@@ -401,8 +401,8 @@
 			"destination": "/getting-started/your-first-project"
 		},
 		{
-			"source": "/cline-cli/samples",
-			"destination": "/cline-cli/samples/overview"
+			"source": "/beadsmith-cli/samples",
+			"destination": "/beadsmith-cli/samples/overview"
 		},
 		{
 			"source": "/features/hooks/real-world-examples",
@@ -434,11 +434,11 @@
 		},
 		{
 			"source": "/features/cline-rules",
-			"destination": "/features/cline-rules/overview"
+			"destination": "/features/beadsmith-rules/overview"
 		},
 		{
 			"source": "/features/conditional-rules",
-			"destination": "/features/cline-rules/conditional-rules"
+			"destination": "/features/beadsmith-rules/conditional-rules"
 		}
 	],
 	"search": {

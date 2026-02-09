@@ -15,8 +15,8 @@ log(`BEADSMITH_ENVIRONMENT: ${process.env.BEADSMITH_ENVIRONMENT}`)
 const SETTINGS_SUBFOLDER = "data"
 
 export function initializeContext(beadsmithDir?: string) {
-	const CLINE_DIR = beadsmithDir || process.env.BEADSMITH_DIR || `${os.homedir()}/.cline`
-	const DATA_DIR = path.join(CLINE_DIR, SETTINGS_SUBFOLDER)
+	const BEADSMITH_DIR = beadsmithDir || process.env.BEADSMITH_DIR || `${os.homedir()}/.beadsmith`
+	const DATA_DIR = path.join(BEADSMITH_DIR, SETTINGS_SUBFOLDER)
 	const INSTALL_DIR = process.env.INSTALL_DIR || __dirname
 	const WORKSPACE_STORAGE_DIR = process.env.WORKSPACE_STORAGE_DIR || path.join(DATA_DIR, "workspace")
 
@@ -48,16 +48,16 @@ export function initializeContext(beadsmithDir?: string) {
 
 		// Set up URIs.
 		storageUri: URI.file(WORKSPACE_STORAGE_DIR),
-		storagePath: WORKSPACE_STORAGE_DIR, // Deprecated, not used in cline.
+		storagePath: WORKSPACE_STORAGE_DIR, // Deprecated, not used in beadsmith.
 		globalStorageUri: URI.file(DATA_DIR),
-		globalStoragePath: DATA_DIR, // Deprecated, not used in cline.
+		globalStoragePath: DATA_DIR, // Deprecated, not used in beadsmith.
 
 		// Logs are global per extension, not per workspace.
 		logUri: URI.file(DATA_DIR),
-		logPath: DATA_DIR, // Deprecated, not used in cline.
+		logPath: DATA_DIR, // Deprecated, not used in beadsmith.
 
 		extensionUri: URI.file(EXTENSION_DIR),
-		extensionPath: EXTENSION_DIR, // Deprecated, not used in cline.
+		extensionPath: EXTENSION_DIR, // Deprecated, not used in beadsmith.
 		asAbsolutePath: (relPath: string) => path.join(EXTENSION_DIR, relPath),
 
 		subscriptions: [], // These need to be destroyed when the extension is deactivated.

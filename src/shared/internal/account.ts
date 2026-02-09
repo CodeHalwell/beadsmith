@@ -1,7 +1,7 @@
 /**
  * List of email domains that are considered trusted testers for Beadsmith.
  */
-const CLINE_TRUSTED_TESTER_DOMAINS = ["fibilabs.tech"]
+const BEADSMITH_TRUSTED_TESTER_DOMAINS = ["fibilabs.tech"]
 
 /**
  * Checks if the given email belongs to a Beadsmith bot user.
@@ -12,5 +12,5 @@ export function isBeadsmithBotUser(email: string): boolean {
 }
 
 export function isBeadsmithInternalTester(email: string): boolean {
-	return isBeadsmithBotUser(email) || CLINE_TRUSTED_TESTER_DOMAINS.some((d) => email.endsWith(`@${d}`))
+	return isBeadsmithBotUser(email) || BEADSMITH_TRUSTED_TESTER_DOMAINS.some((d) => email.endsWith(`@${d}`))
 }

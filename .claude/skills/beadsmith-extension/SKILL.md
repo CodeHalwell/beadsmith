@@ -1,11 +1,11 @@
 ---
-name: cline-extension
-description: Navigate and modify the Cline VS Code extension codebase. Use when working on controllers, task runner, webview UI, state management, tool handlers, system prompts, or message types. Triggers on "Controller", "TaskState", "webview", "ClineAsk", "ClineSay", "ExtensionMessage", "system prompt".
+name: beadsmith-extension
+description: Navigate and modify the Beadsmith VS Code extension codebase. Use when working on controllers, task runner, webview UI, state management, tool handlers, system prompts, or message types. Triggers on "Controller", "TaskState", "webview", "BeadsmithAsk", "BeadsmithSay", "ExtensionMessage", "system prompt".
 ---
 
-# Cline Extension Development
+# Beadsmith Extension Development
 
-Cline is a VS Code extension with TypeScript backend and React webview, communicating via gRPC-over-postMessage.
+Beadsmith is a VS Code extension with TypeScript backend and React webview, communicating via gRPC-over-postMessage.
 
 ## Directory Map
 
@@ -20,11 +20,11 @@ Cline is a VS Code extension with TypeScript backend and React webview, communic
 
 ## Quick Patterns
 
-### Add ClineAsk/ClineSay Type
+### Add BeadsmithAsk/BeadsmithSay Type
 
 1. **Type**: `src/shared/ExtensionMessage.ts`
-2. **Proto enum**: `proto/cline/ui.proto`
-3. **Conversion**: `src/shared/proto-conversions/cline-message.ts`
+2. **Proto enum**: `proto/beadsmith/ui.proto`
+3. **Conversion**: `src/shared/proto-conversions/beadsmith-message.ts`
 4. **Run**: `npm run protos`
 5. **UI**: `webview-ui/src/components/chat/ChatRow.tsx`
 

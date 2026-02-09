@@ -17,8 +17,8 @@
 			"@generated/*": [
 				"../src/generated/*"
 			],
-			"@cline-grpc/*": [
-				"../src/generated/grpc-js/cline/*"
+			"@beadsmith-grpc/*": [
+				"../src/generated/grpc-js/beadsmith/*"
 			],
 			"@harness/*": [
 				"harness/*"

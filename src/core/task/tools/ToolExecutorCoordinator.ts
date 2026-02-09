@@ -1,5 +1,5 @@
 import type { ToolUse } from "@core/assistant-message"
-import { CLINE_MCP_TOOL_IDENTIFIER } from "@/shared/mcp"
+import { BEADSMITH_MCP_TOOL_IDENTIFIER } from "@/shared/mcp"
 import { BeadsmithDefaultTool } from "@/shared/tools"
 import type { ToolResponse } from "../index"
 import type { TaskConfig } from "./types/TaskConfig"
@@ -68,7 +68,7 @@ export class ToolExecutorCoordinator {
 	 */
 	getHandler(toolName: string): IToolHandler | undefined {
 		// HACK: Normalize MCP tool names to the standard handler
-		if (toolName.includes(CLINE_MCP_TOOL_IDENTIFIER)) {
+		if (toolName.includes(BEADSMITH_MCP_TOOL_IDENTIFIER)) {
 			toolName = BeadsmithDefaultTool.MCP_USE
 		}
 		return this.handlers.get(toolName)

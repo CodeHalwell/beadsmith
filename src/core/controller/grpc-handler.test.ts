@@ -131,7 +131,7 @@ describe("grpc-handler", () => {
 				expect(mockPostMessageToWebview.calledOnce).to.be.true
 				const sentMessage = mockPostMessageToWebview.firstCall.args[0]
 				expect(sentMessage.type).to.equal("grpc_response")
-				expect(sentMessage.grpc_response?.error).to.include("Unknown rpc: cline.TestService.unknownMethod")
+				expect(sentMessage.grpc_response?.error).to.include("Unknown rpc: beadsmith.TestService.unknownMethod")
 				expect(sentMessage.grpc_response?.request_id).to.equal("test-999")
 			})
 		})

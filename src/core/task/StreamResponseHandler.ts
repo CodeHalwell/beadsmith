@@ -1,7 +1,7 @@
 import type { ToolUse } from "@core/assistant-message"
 import { JSONParser } from "@streamparser/json"
 import { McpHub } from "@/services/mcp/McpHub"
-import { CLINE_MCP_TOOL_IDENTIFIER } from "@/shared/mcp"
+import { BEADSMITH_MCP_TOOL_IDENTIFIER } from "@/shared/mcp"
 import {
 	BeadsmithAssistantRedactedThinkingBlock,
 	BeadsmithAssistantThinkingBlock,
@@ -184,8 +184,8 @@ class ToolUseHandler {
 				}
 			}
 
-			if (pending.name.includes(CLINE_MCP_TOOL_IDENTIFIER)) {
-				const [key, toolName] = pending.name.split(CLINE_MCP_TOOL_IDENTIFIER)
+			if (pending.name.includes(BEADSMITH_MCP_TOOL_IDENTIFIER)) {
+				const [key, toolName] = pending.name.split(BEADSMITH_MCP_TOOL_IDENTIFIER)
 				results.push({
 					type: "tool_use",
 					name: BeadsmithDefaultTool.MCP_USE,

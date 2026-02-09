@@ -2,7 +2,7 @@
  * Pattern to match simplified Beadsmith CLI syntax: cline "prompt" or cline 'prompt'
  * with optional additional flags after the closing quote
  */
-const CLINE_COMMAND_PATTERN = /^cline\s+(['"])(.+?)\1(\s+.*)?$/
+const BEADSMITH_COMMAND_PATTERN = /^cline\s+(['"])(.+?)\1(\s+.*)?$/
 
 /**
  * Detects if a command is a Beadsmith CLI subagent command.
@@ -17,7 +17,7 @@ export function isSubagentCommand(command: string): boolean {
 	// Match simplified syntaxes
 	// cline "prompt"
 	// cline 'prompt'
-	return CLINE_COMMAND_PATTERN.test(command)
+	return BEADSMITH_COMMAND_PATTERN.test(command)
 }
 
 /**
@@ -58,7 +58,7 @@ function injectSubagentSettings(command: string): string {
 	// Flags/settings to insert after the prompt
 	const postPromptFlags = ["-s yolo_mode_toggled=true", "-s max_consecutive_mistakes=6", "-F plain", "-y", "--oneshot"]
 
-	const match = command.match(CLINE_COMMAND_PATTERN)
+	const match = command.match(BEADSMITH_COMMAND_PATTERN)
 
 	if (match) {
 		const quote = match[1]

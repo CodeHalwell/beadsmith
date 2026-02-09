@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-echo "TaskStart running inside local cline/.clinerules/hooks/ directory"
+echo "TaskStart running inside local beadsmith/.beadsmithrules/hooks/ directory"
 
 input=$(cat)
 echo $input | jq .
@@ -13,7 +13,7 @@ done
 cat <<EOF
 {
   "cancel": false,
-  "contextModification": "TaskStart response from the local cline/.clinerules/hooks/ directory.",
+  "contextModification": "TaskStart response from the local beadsmith/.beadsmithrules/hooks/ directory.",
   "errorMessage": "TaskStart hook custom errorMessage"
 }
 EOF

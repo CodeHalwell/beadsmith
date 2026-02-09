@@ -104,17 +104,17 @@ jobs:
         if: steps.detect.outputs.hit == 'true'
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          CLINE_DIR: ${{ runner.temp }}/beadsmith
+          BEADSMITH_DIR: ${{ runner.temp }}/beadsmith
         run: |
           # Create instance and capture output
           INSTANCE_OUTPUT=$(beadsmith instance new 2>&1)
           
           # Parse address from output (format: "  Address: 127.0.0.1:36733")
-          CLINE_ADDRESS=$(echo "$INSTANCE_OUTPUT" | grep "Address:" | grep -oE '([0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]+')
-          echo "CLINE_ADDRESS=$CLINE_ADDRESS" >> $GITHUB_ENV
+          BEADSMITH_ADDRESS=$(echo "$INSTANCE_OUTPUT" | grep "Address:" | grep -oE '([0-9]{1,3}\.){3}[0-9]{1,3}:[0-9]+')
+          echo "BEADSMITH_ADDRESS=$BEADSMITH_ADDRESS" >> $GITHUB_ENV
           
           # Configure API key
-          beadsmith config set open-router-api-key=$OPENROUTER_API_KEY --address $CLINE_ADDRESS -v
+          beadsmith config set open-router-api-key=$OPENROUTER_API_KEY --address $BEADSMITH_ADDRESS -v
 
       - name: Download analyze script
         if: steps.detect.outputs.hit == 'true'
@@ -131,11 +131,11 @@ jobs:
         env:
           ISSUE_URL: ${{ steps.detect.outputs.issue_url }}
           COMMENT: ${{ steps.detect.outputs.comment_body }}
-          CLINE_ADDRESS: ${{ env.CLINE_ADDRESS }}
+          BEADSMITH_ADDRESS: ${{ env.BEADSMITH_ADDRESS }}
         run: |
           set -euo pipefail
           
-          RESULT=$(./analyze-issue.sh "${ISSUE_URL}" "Analyze this issue. The user asked: ${COMMENT}" "$CLINE_ADDRESS")
+          RESULT=$(./analyze-issue.sh "${ISSUE_URL}" "Analyze this issue. The user asked: ${COMMENT}" "$BEADSMITH_ADDRESS")
           
           {
             echo 'result<<EOF'

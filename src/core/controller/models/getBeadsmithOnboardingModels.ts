@@ -1,5 +1,5 @@
 import { featureFlagsService } from "@/services/feature-flags"
-import { CLINE_ONBOARDING_MODELS } from "@/shared/beadsmith/onboarding"
+import { BEADSMITH_ONBOARDING_MODELS } from "@/shared/beadsmith/onboarding"
 import { OnboardingModel, OnboardingModelGroup } from "@/shared/proto/beadsmith/state"
 
 type OnboardingModelOverride = OnboardingModel & { hidden?: boolean }
@@ -12,7 +12,7 @@ export function getBeadsmithOnboardingModels(): OnboardingModelGroup {
 	}
 
 	const remoteOverrides = featureFlagsService.getOnboardingOverrides()
-	const models = new Map<string, OnboardingModel>(CLINE_ONBOARDING_MODELS.map((model) => [model.id, model]))
+	const models = new Map<string, OnboardingModel>(BEADSMITH_ONBOARDING_MODELS.map((model) => [model.id, model]))
 
 	// Apply remote overrides if available
 	if (remoteOverrides) {

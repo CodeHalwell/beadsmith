@@ -26,7 +26,7 @@ export const formatResponse = {
 		`Access to ${path} is blocked by the .beadsmithignore file settings. You must try to continue in the task without using this file, or ask the user to update the .beadsmithignore file.`,
 
 	permissionDeniedError: (reason: string) =>
-		`Command execution blocked by CLINE_COMMAND_PERMISSIONS: ${reason}. You must try a different approach or ask the user to update the permission settings.`,
+		`Command execution blocked by BEADSMITH_COMMAND_PERMISSIONS: ${reason}. You must try a different approach or ask the user to update the permission settings.`,
 
 	noToolsUsed: (usingNativeToolCalls: boolean) =>
 		usingNativeToolCalls

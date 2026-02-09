@@ -4,7 +4,7 @@ import type { OnboardingModel } from "../proto/beadsmith/state"
  * The list of models available to new users during the onboarding flow.
  * NOTE: Can be overridden by feature flag onboarding models payload.
  */
-export const CLINE_ONBOARDING_MODELS: OnboardingModel[] = [
+export const BEADSMITH_ONBOARDING_MODELS: OnboardingModel[] = [
 	{
 		group: "free",
 		id: "kwaipilot/kat-coder-pro",

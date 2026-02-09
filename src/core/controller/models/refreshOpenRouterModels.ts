@@ -265,12 +265,12 @@ export async function refreshOpenRouterModels(controller: Controller): Promise<R
 /**
  * Stealth models are models that are compatible with the OpenRouter API but not listed on the OpenRouter website or API.
  */
-const CLINE_STEALTH_MODELS: Record<string, ModelInfo> = {}
+const BEADSMITH_STEALTH_MODELS: Record<string, ModelInfo> = {}
 
 export function appendBeadsmithStealthModels(currentModels: Record<string, ModelInfo>): Record<string, ModelInfo> {
 	// Create a shallow clone of the current models to avoid mutating the original object
 	const cloned = { ...currentModels }
-	for (const [modelId, modelInfo] of Object.entries(CLINE_STEALTH_MODELS)) {
+	for (const [modelId, modelInfo] of Object.entries(BEADSMITH_STEALTH_MODELS)) {
 		if (!cloned[modelId]) {
 			cloned[modelId] = modelInfo
 		}

@@ -370,7 +370,7 @@ export function convertProtoToApiProvider(provider: ProtoApiProvider): ApiProvid
 		case ProtoApiProvider.COPILOT_SDK:
 			return "copilot-sdk"
 		case ProtoApiProvider.BEADSMITH:
-			return "cline"
+			return "beadsmith"
 		case ProtoApiProvider.LITELLM:
 			return "litellm"
 		case ProtoApiProvider.MOONSHOT:

@@ -1,6 +1,6 @@
 ---
 title: "Disable Terminal Pagers During Beadsmith Sessions"
-description: "Make CLI output non-interactive when Beadsmith runs commands by detecting the CLINE_ACTIVE environment variable and disabling pagers like less."
+description: "Make CLI output non-interactive when Beadsmith runs commands by detecting the BEADSMITH_ACTIVE environment variable and disabling pagers like less."
 ---
 
 Many CLI tools (like Git) use a pager such as `less` for interactive, scrollable output. When Beadsmith runs commands in your terminal, that interactivity gets in the way — the pager can pause on the first page and block progress. You can configure your shell so that when a terminal is spawned by Beadsmith, pagers are disabled and output streams through normally.
@@ -9,7 +9,7 @@ Many CLI tools (like Git) use a pager such as `less` for interactive, scrollable
 
 Beadsmith sets an environment variable for terminals it opens to run commands:
 
-- `CLINE_ACTIVE` — non-empty when the shell is running under Beadsmith
+- `BEADSMITH_ACTIVE` — non-empty when the shell is running under Beadsmith
 
 You can detect this variable in your shell startup file and adjust environment variables or aliases only for Beadsmith-run sessions. This keeps your normal interactive terminals unchanged.
 
@@ -19,7 +19,7 @@ Add the following to your `~/.zshrc`, `~/.bashrc`, or `~/.bash_profile`:
 
 ```bash
 # Disable pagers when the terminal is launched by Beadsmith
-if [[ -n "$CLINE_ACTIVE" ]]; then
+if [[ -n "$BEADSMITH_ACTIVE" ]]; then
   export PAGER=cat
   export GIT_PAGER=cat
   export SYSTEMD_PAGER=cat
@@ -34,12 +34,12 @@ fi
 - `LESS="-FRX"` makes `less` behave more like streaming output if a tool still calls it
 </Note>
 
-This configuration only applies when `CLINE_ACTIVE` is set, so your normal terminals keep their usual interactive behavior.
+This configuration only applies when `BEADSMITH_ACTIVE` is set, so your normal terminals keep their usual interactive behavior.
 
 ## Verify
 
 - Open a task in Beadsmith that runs terminal commands and check:
-  - `echo "$CLINE_ACTIVE"` prints a non-empty value
+  - `echo "$BEADSMITH_ACTIVE"` prints a non-empty value
   - `git log` or other long outputs should stream without pausing
 - If changes don't take effect:
   - Make sure you updated the correct startup file for your shell
@@ -61,7 +61,7 @@ less -FRX README.md
 - You can also override paging via shell aliases scoped to Beadsmith sessions using options rather than env vars:
 
 ```bash
-if [[ -n "$CLINE_ACTIVE" ]]; then
+if [[ -n "$BEADSMITH_ACTIVE" ]]; then
   # Make 'less' non-interactive by default
   alias less='less -FRX'
   # Disable paging for common tools via CLI flags

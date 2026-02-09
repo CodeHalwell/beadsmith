@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-echo "UserPromptSubmit running inside local cline/.clinerules/hooks/ directory"
+echo "UserPromptSubmit running inside local beadsmith/.beadsmithrules/hooks/ directory"
 
 input=$(cat)
 echo $input | jq .
@@ -13,7 +13,7 @@ done
 cat <<EOF
 {
   "cancel": false,
-  "contextModification": "UserPromptSubmit response from the local cline/.clinerules/hooks/ directory.",
+  "contextModification": "UserPromptSubmit response from the local beadsmith/.beadsmithrules/hooks/ directory.",
   "errorMessage": "UserPromptSubmit hook custom errorMessage"
 }
 EOF
