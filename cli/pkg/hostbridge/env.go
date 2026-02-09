@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"github.com/atotto/clipboard"
-	"github.com/cline/cli/pkg/cli/global"
-	"github.com/cline/grpc-go/cline"
+	"github.com/beadsmith/cli/pkg/cli/global"
+	"github.com/beadsmith/grpc-go/beadsmith"
 	"github.com/cline/grpc-go/host"
 	"google.golang.org/protobuf/proto"
 )
@@ -33,7 +33,7 @@ func NewEnvService(verbose bool) *EnvService {
 }
 
 // ClipboardWriteText writes text to the system clipboard
-func (s *EnvService) ClipboardWriteText(ctx context.Context, req *cline.StringRequest) (*cline.Empty, error) {
+func (s *EnvService) ClipboardWriteText(ctx context.Context, req *beadsmith.StringRequest) (*beadsmith.Empty, error) {
 	if s.verbose {
 		log.Printf("ClipboardWriteText called with text length: %d", len(req.GetValue()))
 	}
@@ -46,11 +46,11 @@ func (s *EnvService) ClipboardWriteText(ctx context.Context, req *cline.StringRe
 		// Don't fail if clipboard is not available (e.g., headless environment)
 	}
 
-	return &cline.Empty{}, nil
+	return &beadsmith.Empty{}, nil
 }
 
 // ClipboardReadText reads text from the system clipboard
-func (s *EnvService) ClipboardReadText(ctx context.Context, req *cline.EmptyRequest) (*cline.String, error) {
+func (s *EnvService) ClipboardReadText(ctx context.Context, req *beadsmith.EmptyRequest) (*beadsmith.String, error) {
 	if s.verbose {
 		log.Printf("ClipboardReadText called")
 	}
@@ -64,27 +64,27 @@ func (s *EnvService) ClipboardReadText(ctx context.Context, req *cline.EmptyRequ
 		text = ""
 	}
 
-	return &cline.String{
+	return &beadsmith.String{
 		Value: text,
 	}, nil
 }
 
 // GetHostVersion returns the host platform name and version
-func (s *EnvService) GetHostVersion(ctx context.Context, req *cline.EmptyRequest) (*host.GetHostVersionResponse, error) {
+func (s *EnvService) GetHostVersion(ctx context.Context, req *beadsmith.EmptyRequest) (*host.GetHostVersionResponse, error) {
 	if s.verbose {
 		log.Printf("GetHostVersion called")
 	}
 
 	return &host.GetHostVersionResponse{
-		Platform:     proto.String("Cline CLI"),
-		Version:      proto.String(global.CliVersion),
-		ClineType:    proto.String("CLI"),
-		ClineVersion: proto.String(global.CliVersion),
+		Platform:        proto.String("Beadsmith CLI"),
+		Version:         proto.String(global.CliVersion),
+		BeadsmithType:   proto.String("CLI"),
+		BeadsmithVersion: proto.String(global.CliVersion),
 	}, nil
 }
 
 // Shutdown initiates a graceful shutdown of the host bridge service
-func (s *EnvService) Shutdown(ctx context.Context, req *cline.EmptyRequest) (*cline.Empty, error) {
+func (s *EnvService) Shutdown(ctx context.Context, req *beadsmith.EmptyRequest) (*beadsmith.Empty, error) {
 	if s.verbose {
 		log.Printf("Shutdown requested via RPC")
 	}
@@ -101,7 +101,7 @@ func (s *EnvService) Shutdown(ctx context.Context, req *cline.EmptyRequest) (*cl
 		}
 	}
 
-	return &cline.Empty{}, nil
+	return &beadsmith.Empty{}, nil
 }
 
 func (s *EnvService) isTelemetryEnabled() bool {
@@ -110,7 +110,7 @@ func (s *EnvService) isTelemetryEnabled() bool {
 }
 
 // GetTelemetrySettings returns the telemetry settings for CLI mode
-func (s *EnvService) GetTelemetrySettings(ctx context.Context, req *cline.EmptyRequest) (*host.GetTelemetrySettingsResponse, error) {
+func (s *EnvService) GetTelemetrySettings(ctx context.Context, req *beadsmith.EmptyRequest) (*host.GetTelemetrySettingsResponse, error) {
 	if s.verbose {
 		log.Printf("GetTelemetrySettings called")
 	}
@@ -132,7 +132,7 @@ func (s *EnvService) GetTelemetrySettings(ctx context.Context, req *cline.EmptyR
 // SubscribeToTelemetrySettings returns a stream of telemetry setting changes
 // In CLI mode, telemetry settings don't change at runtime, so we just send
 // the current state and keep the stream open
-func (s *EnvService) SubscribeToTelemetrySettings(req *cline.EmptyRequest, stream host.EnvService_SubscribeToTelemetrySettingsServer) error {
+func (s *EnvService) SubscribeToTelemetrySettings(req *beadsmith.EmptyRequest, stream host.EnvService_SubscribeToTelemetrySettingsServer) error {
 	if s.verbose {
 		log.Printf("SubscribeToTelemetrySettings called")
 	}

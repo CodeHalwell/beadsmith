@@ -14,6 +14,9 @@ pnpm-lock.yaml
 
 .clineignore
 .venv
+__pycache__/
+*.py[cod]
+*$py.class
 .actrc
 CLAUDE.local.md
 
@@ -34,6 +37,9 @@ coverage-unit
 
 .worktrees
 
+# CLI (Go) - not used in this fork
+cli/
+
 ## Generated files ##
 src/generated/
 src/shared/proto/
@@ -46,3 +52,6 @@ test-results
 /pkg
 .secrets
 
+
+.fake
+nul

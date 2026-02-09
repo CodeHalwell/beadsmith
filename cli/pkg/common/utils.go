@@ -178,11 +178,11 @@ REQUIREMENTS:
 • Current Node.js version: %s
 
 DEBUGGING STEPS:
-1. View recent logs: cline log list
-2. Logs are available in: ~/.cline/logs/
-3. The most recent cline-core log file is usually valuable
+1. View recent logs: beadsmith log list
+2. Logs are available in: ~/.beadsmith/logs/
+3. The most recent beadsmith-core log file is usually valuable
 
-For additional help, visit: https://github.com/cline/cline/issues
+For additional help, visit: https://github.com/CodeHalwell/beadsmith/issues
 `, maxRetries, lastErr, GetNodeVersion())
 }
 

@@ -1,4 +1,4 @@
-import { ClineMessage } from "@shared/ExtensionMessage"
+import { BeadsmithMessage } from "@shared/ExtensionMessage"
 import { ChevronDownIcon, ChevronRightIcon } from "lucide-react"
 import React, { useCallback, useLayoutEffect, useMemo, useState } from "react"
 import Thumbnails from "@/components/common/Thumbnails"
@@ -6,6 +6,7 @@ import { getModeSpecificFields, normalizeApiConfiguration } from "@/components/s
 import { useExtensionState } from "@/context/ExtensionStateContext"
 import { cn } from "@/lib/utils"
 import { getEnvironmentColor } from "@/utils/environmentColors"
+import { BeadTimeline } from "./BeadTimeline"
 import CopyTaskButton from "./buttons/CopyTaskButton"
 import DeleteTaskButton from "./buttons/DeleteTaskButton"
 import NewTaskButton from "./buttons/NewTaskButton"
@@ -17,7 +18,7 @@ import { highlightText } from "./Highlights"
 
 const IS_DEV = process.env.IS_DEV === '"true"'
 interface TaskHeaderProps {
-	task: ClineMessage
+	task: BeadsmithMessage
 	tokensIn: number
 	tokensOut: number
 	doesModelSupportPromptCache: boolean
@@ -98,7 +99,8 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 		(modeFields.apiProvider !== "vscode-lm" &&
 			modeFields.apiProvider !== "ollama" &&
 			modeFields.apiProvider !== "lmstudio" &&
-			modeFields.apiProvider !== "openai-codex") // Subscription-based, no per-token costs
+			modeFields.apiProvider !== "openai-codex" &&
+			modeFields.apiProvider !== "copilot-sdk") // Subscription-based, no per-token costs
 
 	// Event handlers
 	const toggleTaskExpanded = useCallback(() => setIsTaskExpanded(!isTaskExpanded), [setIsTaskExpanded, isTaskExpanded])
@@ -222,6 +224,9 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 
 			{/* Display Focus Chain To-Do List */}
 			<FocusChain currentTaskItemId={currentTaskItem?.id} lastProgressMessageText={lastProgressMessageText} />
+
+			{/* Display Bead Timeline (Ralph Wiggum Loop) */}
+			<BeadTimeline />
 		</div>
 	)
 }
