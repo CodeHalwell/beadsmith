@@ -56,11 +56,11 @@ jobs:
 
       - name: Install and Verify Beadsmith CLI
         run: |
-          npx cline version # verify installation
+          npx beadsmith version # verify installation
 
       - name: Configure Beadsmith with Anthropic
         run: |
-          npx cline auth --provider anthropic \
+          npx beadsmith auth --provider anthropic \
             --apikey "${{ secrets.ANTHROPIC_API_KEY }}" \
             --modelid claude-opus-4-5-20251101
 
@@ -96,7 +96,7 @@ jobs:
               ]
             }
         run: |
-          npx cline --yolo 'You'\''re a GitHub PR reviewer for the open source Beadsmith repository. Your goal is to give the PR author helpful feedback and give maintainers the context they need to review efficiently.
+          npx beadsmith --yolo 'You'\''re a GitHub PR reviewer for the open source Beadsmith repository. Your goal is to give the PR author helpful feedback and give maintainers the context they need to review efficiently.
 
           PR: #'"${PR_NUMBER}"'
 

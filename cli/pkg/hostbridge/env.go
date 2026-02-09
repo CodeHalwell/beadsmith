@@ -33,7 +33,7 @@ func NewEnvService(verbose bool) *EnvService {
 }
 
 // ClipboardWriteText writes text to the system clipboard
-func (s *EnvService) ClipboardWriteText(ctx context.Context, req *cline.StringRequest) (*cline.Empty, error) {
+func (s *EnvService) ClipboardWriteText(ctx context.Context, req *beadsmith.StringRequest) (*beadsmith.Empty, error) {
 	if s.verbose {
 		log.Printf("ClipboardWriteText called with text length: %d", len(req.GetValue()))
 	}
@@ -50,7 +50,7 @@ func (s *EnvService) ClipboardWriteText(ctx context.Context, req *cline.StringRe
 }
 
 // ClipboardReadText reads text from the system clipboard
-func (s *EnvService) ClipboardReadText(ctx context.Context, req *beadsmith.EmptyRequest) (*cline.String, error) {
+func (s *EnvService) ClipboardReadText(ctx context.Context, req *beadsmith.EmptyRequest) (*beadsmith.String, error) {
 	if s.verbose {
 		log.Printf("ClipboardReadText called")
 	}
@@ -84,7 +84,7 @@ func (s *EnvService) GetHostVersion(ctx context.Context, req *beadsmith.EmptyReq
 }
 
 // Shutdown initiates a graceful shutdown of the host bridge service
-func (s *EnvService) Shutdown(ctx context.Context, req *beadsmith.EmptyRequest) (*cline.Empty, error) {
+func (s *EnvService) Shutdown(ctx context.Context, req *beadsmith.EmptyRequest) (*beadsmith.Empty, error) {
 	if s.verbose {
 		log.Printf("Shutdown requested via RPC")
 	}
