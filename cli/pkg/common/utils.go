@@ -178,7 +178,7 @@ REQUIREMENTS:
 • Current Node.js version: %s
 
 DEBUGGING STEPS:
-1. View recent logs: cline log list
+1. View recent logs: beadsmith log list
 2. Logs are available in: ~/.beadsmith/logs/
 3. The most recent beadsmith-core log file is usually valuable
 

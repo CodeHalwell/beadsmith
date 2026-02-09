@@ -76,10 +76,10 @@ func (s *EnvService) GetHostVersion(ctx context.Context, req *beadsmith.EmptyReq
 	}
 
 	return &host.GetHostVersionResponse{
-		Platform:     proto.String("Beadsmith CLI"),
-		Version:      proto.String(global.CliVersion),
-		ClineType:    proto.String("CLI"),
-		ClineVersion: proto.String(global.CliVersion),
+		Platform:        proto.String("Beadsmith CLI"),
+		Version:         proto.String(global.CliVersion),
+		BeadsmithType:   proto.String("CLI"),
+		BeadsmithVersion: proto.String(global.CliVersion),
 	}, nil
 }
 
