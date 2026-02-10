@@ -339,9 +339,9 @@ export const DagPanel = memo<DagPanelProps>(({ className, onDone }) => {
 							<GitBranchIcon className="size-4" />
 							<span className="font-medium text-sm">Dependency Graph</span>
 						</div>
-						{graph?.root && (
-							<span className="text-xs text-muted-foreground ml-6" title={graph.root}>
-								{graph.root.split(/[\\/]/).slice(-2).join("/")}
+						{graph?.projectRoot && (
+							<span className="text-xs text-muted-foreground ml-6" title={graph.projectRoot}>
+								{graph.projectRoot.split(/[\\/]/).slice(-2).join("/")}
 							</span>
 						)}
 					</div>

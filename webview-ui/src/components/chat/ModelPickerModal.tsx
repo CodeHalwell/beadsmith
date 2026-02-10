@@ -46,7 +46,7 @@ const SETTINGS_ONLY_PROVIDERS: ApiProvider[] = [
 	"together",
 ]
 
-const OPENROUTER_MODEL_PROVIDERS: ApiProvider[] = ["cline", "openrouter", "vercel-ai-gateway"]
+const OPENROUTER_MODEL_PROVIDERS: ApiProvider[] = ["beadsmith", "openrouter", "vercel-ai-gateway"]
 
 interface ModelPickerModalProps {
 	isOpen: boolean
@@ -216,7 +216,7 @@ const ModelPickerModal: React.FC<ModelPickerModalProps> = ({ isOpen, onOpenChang
 
 	// Filtered models - for OpenRouter/Vercel show all by default, for Beadsmith only when searching
 	const filteredModels = useMemo(() => {
-		const isBeadsmith = selectedProvider === "cline"
+		const isBeadsmith = selectedProvider === "beadsmith"
 
 		// For Cline: only show non-featured models when searching
 		if (isBeadsmith && !searchQuery) {
@@ -257,7 +257,7 @@ const ModelPickerModal: React.FC<ModelPickerModalProps> = ({ isOpen, onOpenChang
 
 	// Featured models for Beadsmith provider (recommended + free)
 	const featuredModels = useMemo(() => {
-		if (selectedProvider !== "cline") {
+		if (selectedProvider !== "beadsmith") {
 			return []
 		}
 
@@ -550,7 +550,7 @@ const ModelPickerModal: React.FC<ModelPickerModalProps> = ({ isOpen, onOpenChang
 		onOpenChange(!isOpen)
 	}, [isOpen, onOpenChange])
 
-	const isBeadsmithProvider = selectedProvider === "cline"
+	const isBeadsmithProvider = selectedProvider === "beadsmith"
 	const isSearching = !!searchQuery
 
 	return (

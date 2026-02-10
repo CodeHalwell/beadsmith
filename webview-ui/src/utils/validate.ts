@@ -71,7 +71,7 @@ export function validateApiConfiguration(currentMode: Mode, apiConfiguration?: A
 					return "You must provide a valid API key or choose a different provider."
 				}
 				break
-			case "cline":
+			case "beadsmith":
 				break
 			case "openai-codex":
 				// Authentication is handled via OAuth, not API key
@@ -192,7 +192,7 @@ export function validateModelId(
 		const { apiProvider, openRouterModelId } = getModeSpecificFields(apiConfiguration, currentMode)
 		switch (apiProvider) {
 			case "openrouter":
-			case "cline":
+			case "beadsmith":
 				const modelId = openRouterModelId || openRouterDefaultModelId // in case the user hasn't changed the model id, it will be undefined by default
 				if (!modelId) {
 					return "You must provide a model ID."

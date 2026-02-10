@@ -1,7 +1,7 @@
 import { HeroUIProvider } from "@heroui/react"
 import { DEFAULT_AUTO_APPROVAL_SETTINGS } from "@shared/AutoApprovalSettings"
 import { type ApiConfiguration, bedrockModels } from "@shared/api"
-import { CLINE_ONBOARDING_MODELS } from "@shared/beadsmith/onboarding"
+import { BEADSMITH_ONBOARDING_MODELS } from "@shared/beadsmith/onboarding"
 import type { BeadsmithMessage, BeadsmithSayTool } from "@shared/ExtensionMessage"
 import type { HistoryItem } from "@shared/HistoryItem"
 import type { Meta, StoryObj } from "@storybook/react-vite"
@@ -299,7 +299,7 @@ export const Onboarding: Story = {
 			welcomeViewCompleted: false,
 			showWelcome: true,
 			beadsmithMessages: [],
-			onboardingModels: { models: CLINE_ONBOARDING_MODELS },
+			onboardingModels: { models: BEADSMITH_ONBOARDING_MODELS },
 		}),
 	],
 	parameters: {
@@ -310,7 +310,7 @@ export const Onboarding: Story = {
 		},
 	},
 	args: {
-		onboardingModels: { models: CLINE_ONBOARDING_MODELS },
+		onboardingModels: { models: BEADSMITH_ONBOARDING_MODELS },
 	},
 	argTypes: {
 		onboardingModels: {

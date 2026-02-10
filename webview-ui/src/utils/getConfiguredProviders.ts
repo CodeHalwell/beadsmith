@@ -9,11 +9,11 @@ export function getConfiguredProviders(apiConfiguration: ApiConfiguration | unde
 	const configured: ApiProvider[] = []
 
 	if (!apiConfiguration) {
-		return ["cline"] // Beadsmith is always available
+		return ["beadsmith"] // Beadsmith is always available
 	}
 
 	// Beadsmith - always available (uses account-based auth)
-	configured.push("cline")
+	configured.push("beadsmith")
 
 	// Anthropic - requires API key
 	if (apiConfiguration.apiKey) {

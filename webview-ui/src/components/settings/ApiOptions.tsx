@@ -357,7 +357,7 @@ const ApiOptions = ({
 				<HicapProvider currentMode={currentMode} isPopup={isPopup} showModelOptions={showModelOptions} />
 			)}
 
-			{apiConfiguration && selectedProvider === "cline" && (
+			{apiConfiguration && selectedProvider === "beadsmith" && (
 				<BeadsmithProvider
 					currentMode={currentMode}
 					initialModelTab={initialModelTab}

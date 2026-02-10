@@ -139,7 +139,7 @@ export function getModelsForProvider(
 			return dynamicModels?.liteLlmModels
 		// Providers with dynamic models - return undefined
 		case "openrouter":
-		case "cline":
+		case "beadsmith":
 		case "openai":
 		case "ollama":
 		case "lmstudio":
@@ -265,7 +265,7 @@ export function normalizeApiConfiguration(
 				selectedModelId: requestyModelId || requestyDefaultModelId,
 				selectedModelInfo: requestyModelInfo || requestyDefaultModelInfo,
 			}
-		case "cline":
+		case "beadsmith":
 			const beadsmithOpenRouterModelId =
 				(currentMode === "plan"
 					? apiConfiguration?.planModeOpenRouterModelId
@@ -665,7 +665,7 @@ export async function syncModeConfigurations(
 	// Handle provider-specific fields
 	switch (apiProvider) {
 		case "openrouter":
-		case "cline":
+		case "beadsmith":
 			updates.planModeOpenRouterModelId = sourceFields.openRouterModelId
 			updates.actModeOpenRouterModelId = sourceFields.openRouterModelId
 			updates.planModeOpenRouterModelInfo = sourceFields.openRouterModelInfo
@@ -829,7 +829,7 @@ export async function syncModeConfigurations(
  * @returns Filtered array of model IDs
  */
 export function filterOpenRouterModelIds(modelIds: string[], provider: ApiProvider): string[] {
-	if (provider === "cline") {
+	if (provider === "beadsmith") {
 		// For Beadsmith provider: exclude :free models, but keep Minimax models
 		return modelIds.filter((id) => {
 			// Keep all Minimax and devstral models regardless of :free suffix

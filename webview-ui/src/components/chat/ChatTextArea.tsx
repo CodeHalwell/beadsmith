@@ -1168,7 +1168,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 				return unknownModel
 			}
 			switch (selectedProvider) {
-				case "cline":
+				case "beadsmith":
 					return `${selectedProvider}:${selectedModelId}`
 				case "openai":
 					return `openai-compat:${selectedModelId}`

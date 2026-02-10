@@ -140,7 +140,7 @@ const OpenRouterModelPicker: React.FC<OpenRouterModelPickerProps> = ({
 
 	const { selectedModelId, selectedModelInfo } = useMemo(() => {
 		const selected = normalizeApiConfiguration(apiConfiguration, currentMode)
-		const isBeadsmith = selected.selectedProvider === "cline"
+		const isBeadsmith = selected.selectedProvider === "beadsmith"
 		// Makes sure "Free" featured models have $0 pricing for Beadsmith provider
 		if (isBeadsmith && FREE_CLINE_MODELS.includes(selected.selectedModelId)) {
 			return {
@@ -318,7 +318,7 @@ const OpenRouterModelPicker: React.FC<OpenRouterModelPickerProps> = ({
 					<span style={{ fontWeight: 500 }}>Model</span>
 				</label>
 
-				{modeFields.apiProvider === "cline" && (
+				{modeFields.apiProvider === "beadsmith" && (
 					<>
 						{/* Tabs */}
 						<TabsContainer style={{ marginTop: 4 }}>
