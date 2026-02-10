@@ -144,9 +144,9 @@ export function transformRemoteConfigToStateShape(remoteConfig: RemoteConfig): P
 
 	const beadsmithSettings = remoteConfig.providerSettings?.Cline
 	if (beadsmithSettings) {
-		transformed.planModeApiProvider = "cline"
-		transformed.actModeApiProvider = "cline"
-		providers.push("cline")
+		transformed.planModeApiProvider = "beadsmith"
+		transformed.actModeApiProvider = "beadsmith"
+		providers.push("beadsmith")
 	}
 
 	// Map LiteLLM provider settings

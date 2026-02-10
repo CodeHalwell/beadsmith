@@ -146,6 +146,8 @@ export class Controller {
 						Logger.error("[Controller] Failed to persist bead state:", error)
 					})
 				}
+				// Update the webview with bead runtime state
+				void this.postStateToWebview()
 			})
 
 			// Wire up task completion summary storage
@@ -763,7 +765,7 @@ export class Controller {
 		try {
 			await this.authService.handleAuthCallback(customToken, provider ? provider : "google")
 
-			const beadsmithProvider: ApiProvider = "cline"
+			const beadsmithProvider: ApiProvider = "beadsmith"
 
 			// Get current settings to determine how to update providers
 			const planActSeparateModelsSetting = this.stateManager.getGlobalSettingsKey("planActSeparateModelsSetting")
@@ -1244,6 +1246,14 @@ export class Controller {
 			beadTestCommand: this.stateManager.getGlobalSettingsKey("beadTestCommand"),
 			ralphMaxIterations: this.stateManager.getGlobalSettingsKey("ralphMaxIterations"),
 			ralphTokenBudget: this.stateManager.getGlobalSettingsKey("ralphTokenBudget"),
+			// Bead runtime state (from BeadManager)
+			...(this._beadManager
+				? {
+						currentBeadNumber: this._beadManager.getState().currentBeadNumber,
+						beadTaskStatus: this._beadManager.getState().status,
+						totalBeadsCompleted: this._beadManager.getState().beads.filter((b) => b.completedAt !== undefined).length,
+					}
+				: {}),
 			// DAG state
 			dagEnabled: this.stateManager.getGlobalSettingsKey("dagEnabled"),
 			dagIsAnalyzing: this.dagIsAnalyzing,

@@ -16,7 +16,8 @@ const GENERIC: BeadsmithToolSpec = {
 - The prompt must be at least 2 characters
 - HTTP URLs will be automatically upgraded to HTTPS
 - This tool is read-only and does not modify any files`,
-	contextRequirements: (context) => context.providerInfo.providerId === "cline" && context.beadsmithWebToolsEnabled === true,
+	contextRequirements: (context) =>
+		context.providerInfo.providerId === "beadsmith" && context.beadsmithWebToolsEnabled === true,
 	parameters: [
 		{
 			name: "url",
@@ -40,7 +41,8 @@ const NATIVE_NEXT_GEN: BeadsmithToolSpec = {
 	name: "web_fetch",
 	description:
 		"Fetches and analyzes content from a specified URL. IMPORTANT: If an MCP-provided web fetch tool is available, prefer using that tool instead of this one, as it may have fewer restrictions.",
-	contextRequirements: (context) => context.providerInfo.providerId === "cline" && context.beadsmithWebToolsEnabled === true,
+	contextRequirements: (context) =>
+		context.providerInfo.providerId === "beadsmith" && context.beadsmithWebToolsEnabled === true,
 	parameters: [
 		{
 			name: "url",

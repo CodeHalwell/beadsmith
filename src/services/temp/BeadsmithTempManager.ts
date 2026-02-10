@@ -2,7 +2,7 @@
  * BeadsmithTempManager - Manages temporary files for Beadsmith with automatic cleanup.
  *
  * Simple approach:
- * - Uses a "cline" subdirectory inside the system temp dir (falls back to system temp if creation fails)
+ * - Uses a "beadsmith" subdirectory inside the system temp dir (falls back to system temp if creation fails)
  * - Cleans up files older than 50 hours on extension activation
  * - Enforces 2GB total size cap to prevent disk bloat
  * - Cross-platform (macOS, Windows, Linux)
@@ -32,12 +32,12 @@ class BeadsmithTempManagerImpl {
 	private cleanupIntervalId: NodeJS.Timeout | null = null
 
 	constructor() {
-		// Uses system temp directory with a dedicated "cline" subdirectory when possible:
-		// macOS: /var/folders/xx/.../T/cline
-		// Windows: C:\Users\{user}\AppData\Local\Temp\cline
-		// Linux: /tmp/cline
+		// Uses system temp directory with a dedicated "beadsmith" subdirectory when possible:
+		// macOS: /var/folders/xx/.../T/beadsmith
+		// Windows: C:\Users\{user}\AppData\Local\Temp\beadsmith
+		// Linux: /tmp/beadsmith
 		const baseTempDir = os.tmpdir()
-		const beadsmithTempDir = path.join(baseTempDir, "cline")
+		const beadsmithTempDir = path.join(baseTempDir, "beadsmith")
 
 		try {
 			fs.mkdirSync(beadsmithTempDir, { recursive: true })

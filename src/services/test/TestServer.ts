@@ -211,7 +211,7 @@ export async function createTestServer(controller: Controller): Promise<http.Ser
 						// Update API configuration with API key
 						const updatedConfig = {
 							...apiConfiguration,
-							apiProvider: "cline" as ApiProvider,
+							apiProvider: "beadsmith" as ApiProvider,
 							beadsmithAccountId: apiKey,
 						}
 
@@ -220,12 +220,12 @@ export async function createTestServer(controller: Controller): Promise<http.Ser
 
 						visibleWebview.controller.stateManager.setApiConfiguration(updatedConfig)
 
-						// Update cache service to use cline provider
+						// Update cache service to use beadsmith provider
 						const currentConfig = visibleWebview.controller.stateManager.getApiConfiguration()
 						visibleWebview.controller.stateManager.setApiConfiguration({
 							...currentConfig,
-							planModeApiProvider: "cline",
-							actModeApiProvider: "cline",
+							planModeApiProvider: "beadsmith",
+							actModeApiProvider: "beadsmith",
 						})
 
 						// Post state to webview to reflect changes

@@ -44,11 +44,11 @@ export class OpenTelemetryTelemetryProvider implements ITelemetryProvider {
 		}
 
 		if (meterProvider) {
-			this.meter = meterProvider.getMeter("cline")
+			this.meter = meterProvider.getMeter("beadsmith")
 		}
 
 		if (loggerProvider) {
-			this.logger = loggerProvider.getLogger("cline")
+			this.logger = loggerProvider.getLogger("beadsmith")
 		}
 
 		// Log initialization status

@@ -547,7 +547,7 @@ describe("Telemetry system is abstracted and can easily switch between providers
 				skillSource: "global",
 				skillsAvailableGlobal: 2,
 				skillsAvailableProject: 3,
-				provider: "cline",
+				provider: "beadsmith",
 				modelId: "anthropic/claude-sonnet-4.5",
 			})
 
@@ -560,7 +560,7 @@ describe("Telemetry system is abstracted and can easily switch between providers
 			assert.strictEqual(properties.skillSource, "global", "Properties should include skillSource")
 			assert.strictEqual(properties.skillsAvailableGlobal, 2, "Properties should include global skill count")
 			assert.strictEqual(properties.skillsAvailableProject, 3, "Properties should include project skill count")
-			assert.strictEqual(properties.provider, "cline", "Properties should include provider")
+			assert.strictEqual(properties.provider, "beadsmith", "Properties should include provider")
 			assert.strictEqual(properties.modelId, "anthropic/claude-sonnet-4.5", "Properties should include modelId")
 
 			logSpy.restore()

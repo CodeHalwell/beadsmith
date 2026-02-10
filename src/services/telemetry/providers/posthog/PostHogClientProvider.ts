@@ -53,11 +53,11 @@ export class PostHogClientProvider {
 		if (!exceptionList?.length) {
 			return null
 		}
-		// Check if any exception is from Cline
+		// Check if any exception is from Beadsmith
 		for (let i = 0; i < exceptionList.length; i++) {
 			const stacktrace = exceptionList[i].stacktrace
-			// Fast check: error message contains "cline"
-			if (stacktrace?.value?.toLowerCase().includes("cline")) {
+			// Fast check: error message contains "beadsmith"
+			if (stacktrace?.value?.toLowerCase().includes("beadsmith")) {
 				return event
 			}
 			// Check stack frames for Beadsmith extension path

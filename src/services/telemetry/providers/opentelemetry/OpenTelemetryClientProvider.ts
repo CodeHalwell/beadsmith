@@ -63,7 +63,7 @@ export class OpenTelemetryClientProvider {
 
 		// Create resource with service information
 		const resource = new Resource({
-			[ATTR_SERVICE_NAME]: "cline",
+			[ATTR_SERVICE_NAME]: "beadsmith",
 			[ATTR_SERVICE_VERSION]: ExtensionRegistryInfo.version,
 		})
 

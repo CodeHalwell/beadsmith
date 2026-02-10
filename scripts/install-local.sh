@@ -12,11 +12,11 @@ DIM='\033[2m'
 NC='\033[0m'
 
 # Configuration
-INSTALL_DIR="${CLINE_INSTALL_DIR:-$HOME/.cline/cli}"
+INSTALL_DIR="${BEADSMITH_INSTALL_DIR:-$HOME/.beadsmith/cli}"
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 echo ""
-echo -e "${MAGENTA}${BOLD}Installing Cline CLI from local build${NC}"
+echo -e "${MAGENTA}${BOLD}Installing Beadsmith CLI from local build${NC}"
 echo ""
 
 # Always rebuild CLI to ensure latest changes
@@ -36,7 +36,7 @@ else
     exit 1
 fi
 
-# Always rebuild standalone to ensure latest cline-core.js
+# Always rebuild standalone to ensure latest beadsmith-core.js
 echo -e "${CYAN}→${NC} ${DIM}Rebuilding standalone package (this may take ~30 seconds)...${NC}"
 rm -rf "$PROJECT_ROOT/dist-standalone"
 if npm run compile-standalone; then
@@ -46,7 +46,7 @@ else
     exit 1
 fi
 
-# Ensure extension package.json is present for cline-core startup
+# Ensure extension package.json is present for beadsmith-core startup
 mkdir -p "$PROJECT_ROOT/dist-standalone/extension"
 cp "$PROJECT_ROOT/package.json" "$PROJECT_ROOT/dist-standalone/extension/package.json"
 
@@ -64,11 +64,11 @@ fi
 # Create installation directory
 mkdir -p "$INSTALL_DIR/bin"
 
-# Copy standalone package first (cline-core.js, wasm files, etc.)
+# Copy standalone package first (beadsmith-core.js, wasm files, etc.)
 rsync -a --exclude='bin' "$PROJECT_ROOT/dist-standalone/" "$INSTALL_DIR/"
 
 # Install runtime dependencies (grpc-health-check, better-sqlite3, etc.)
-# These are external dependencies not bundled into cline-core.js
+# These are external dependencies not bundled into beadsmith-core.js
 echo -e "${CYAN}→${NC} ${DIM}Installing runtime dependencies...${NC}"
 cd "$PROJECT_ROOT/standalone/runtime-files"
 npm install --silent 2>/dev/null || npm install
@@ -92,8 +92,8 @@ fi
 
 # Copy binaries (this will create/overwrite the bin directory)
 mkdir -p "$INSTALL_DIR/bin"
-cp "$PROJECT_ROOT/cli/bin/cline" "$INSTALL_DIR/bin/"
-cp "$PROJECT_ROOT/cli/bin/cline-host" "$INSTALL_DIR/bin/"
+cp "$PROJECT_ROOT/cli/bin/beadsmith" "$INSTALL_DIR/bin/"
+cp "$PROJECT_ROOT/cli/bin/beadsmith-host" "$INSTALL_DIR/bin/"
 
 # Use system Node.js (symlink to avoid copying large binary)
 if command -v node >/dev/null 2>&1; then
@@ -105,8 +105,8 @@ else
 fi
 
 # Make binaries executable
-chmod +x "$INSTALL_DIR/bin/cline"
-chmod +x "$INSTALL_DIR/bin/cline-host"
+chmod +x "$INSTALL_DIR/bin/beadsmith"
+chmod +x "$INSTALL_DIR/bin/beadsmith-host"
 chmod +x "$INSTALL_DIR/bin/node" 2>/dev/null || true
 
 # Rebuild better-sqlite3 for system Node.js version
@@ -128,7 +128,7 @@ fi
 
 if ! grep -q "$BIN_DIR" "$SHELL_CONFIG" 2>/dev/null; then
     echo "" >> "$SHELL_CONFIG"
-    echo "# Cline CLI" >> "$SHELL_CONFIG"
+    echo "# Beadsmith CLI" >> "$SHELL_CONFIG"
     echo "export PATH=\"$BIN_DIR:\$PATH\"" >> "$SHELL_CONFIG"
     echo -e "${GREEN}✓${NC} Added to PATH in ${CYAN}$(basename $SHELL_CONFIG)${NC}"
 else
@@ -138,7 +138,7 @@ fi
 echo ""
 echo -e "${GREEN}${BOLD}Installation complete!${NC}"
 echo ""
-echo -e "Run this to start using ${MAGENTA}${BOLD}cline${NC} immediately:"
+echo -e "Run this to start using ${MAGENTA}${BOLD}beadsmith${NC} immediately:"
 echo ""
 echo -e "${YELLOW}${BOLD}    exec \$SHELL${NC}"
 echo ""

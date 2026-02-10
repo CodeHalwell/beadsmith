@@ -134,8 +134,8 @@ if (production) {
 }
 // Set the environment and telemetry env vars. The API key env vars need to be populated in the GitHub
 // workflows from the secrets.
-if (process.env.CLINE_ENVIRONMENT) {
-	buildEnvVars["process.env.CLINE_ENVIRONMENT"] = JSON.stringify(process.env.CLINE_ENVIRONMENT)
+if (process.env.BEADSMITH_ENVIRONMENT) {
+	buildEnvVars["process.env.BEADSMITH_ENVIRONMENT"] = JSON.stringify(process.env.BEADSMITH_ENVIRONMENT)
 }
 if (process.env.TELEMETRY_SERVICE_API_KEY) {
 	buildEnvVars["process.env.TELEMETRY_SERVICE_API_KEY"] = JSON.stringify(process.env.TELEMETRY_SERVICE_API_KEY)
@@ -200,8 +200,8 @@ const extensionConfig = {
 // Standalone-specific configuration
 const standaloneConfig = {
 	...baseConfig,
-	entryPoints: ["src/standalone/cline-core.ts"],
-	outfile: `${destDir}/cline-core.js`,
+	entryPoints: ["src/standalone/beadsmith-core.ts"],
+	outfile: `${destDir}/beadsmith-core.js`,
 	// These modules need to load files from the module directory at runtime,
 	// so they cannot be bundled.
 	external: ["vscode", "@grpc/reflection", "grpc-health-check", "better-sqlite3"],

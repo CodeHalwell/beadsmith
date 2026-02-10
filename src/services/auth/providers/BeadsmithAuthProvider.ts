@@ -62,7 +62,7 @@ export interface BeadsmithAuthApiTokenRefreshResponse {
 }
 
 export class BeadsmithAuthProvider {
-	readonly name = "cline"
+	readonly name = "beadsmith"
 	private refreshRetryCount = 0
 	private lastRefreshAttempt = 0
 	private readonly MAX_REFRESH_RETRIES = 3

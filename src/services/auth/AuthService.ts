@@ -220,7 +220,7 @@ export class AuthService {
 
 	/**
 	 * Gets the provider name for the current authentication
-	 * @returns The provider name (e.g., "cline", "firebase"), or null if not authenticated
+	 * @returns The provider name (e.g., "beadsmith", "firebase"), or null if not authenticated
 	 */
 	getProviderName(): string | null {
 		return this._beadsmithAuthInfo?.provider ?? null

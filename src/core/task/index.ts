@@ -2115,7 +2115,7 @@ export class Task {
 
 				// Check if this is a Beadsmith provider insufficient credits error - don't auto-retry these
 				const isBeadsmithProviderInsufficientCredits = (() => {
-					if (providerId !== "cline") {
+					if (providerId !== "beadsmith") {
 						return false
 					}
 					try {

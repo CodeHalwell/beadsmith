@@ -16,7 +16,8 @@ const GENERIC: BeadsmithToolSpec = {
 - You may provide either allowed_domains OR blocked_domains, but NOT both
 - Domains should be provided as a JSON array of strings
 - This tool is read-only and does not modify any files`,
-	contextRequirements: (context) => context.providerInfo.providerId === "cline" && context.beadsmithWebToolsEnabled === true,
+	contextRequirements: (context) =>
+		context.providerInfo.providerId === "beadsmith" && context.beadsmithWebToolsEnabled === true,
 	parameters: [
 		{
 			name: "query",
@@ -46,7 +47,8 @@ const NATIVE_NEXT_GEN: BeadsmithToolSpec = {
 	name: "web_search",
 	description:
 		"Performs a web search and returns relevant results with titles and URLs. IMPORTANT: If an MCP-provided web search tool is available, prefer using that tool instead of this one, as it may have fewer restrictions.",
-	contextRequirements: (context) => context.providerInfo.providerId === "cline" && context.beadsmithWebToolsEnabled === true,
+	contextRequirements: (context) =>
+		context.providerInfo.providerId === "beadsmith" && context.beadsmithWebToolsEnabled === true,
 	parameters: [
 		{
 			name: "query",

@@ -31,7 +31,7 @@ function parseIntEnv(value: string | undefined, fallback: number): number {
 export function getBlobStoreSettingsFromEnv(): BlobStoreSettings {
 	return {
 		adapterType: process?.env?.BEADSMITH_STORAGE_ADAPTER || "unknown",
-		bucket: process?.env?.BEADSMITH_STORAGE_BUCKET || "cline",
+		bucket: process?.env?.BEADSMITH_STORAGE_BUCKET || "beadsmith",
 		accessKeyId: process?.env?.BEADSMITH_STORAGE_ACCESS_KEY_ID || "",
 		secretAccessKey: process?.env?.BEADSMITH_STORAGE_SECRET_ACCESS_KEY || "",
 		region: process?.env?.BEADSMITH_STORAGE_REGION,

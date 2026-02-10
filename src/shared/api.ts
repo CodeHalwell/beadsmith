@@ -22,7 +22,7 @@ export type ApiProvider =
 	| "mistral"
 	| "vscode-lm"
 	| "copilot-sdk"
-	| "cline"
+	| "beadsmith"
 	| "litellm"
 	| "moonshot"
 	| "nebius"

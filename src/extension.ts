@@ -50,6 +50,7 @@ import { BeadsmithTempManager } from "./services/temp"
 import { SharedUriHandler } from "./services/uri/SharedUriHandler"
 import { ShowMessageType } from "./shared/proto/host/window"
 import { fileExistsAtPath } from "./utils/fs"
+
 /*
 Built using https://github.com/microsoft/vscode-webview-ui-toolkit
 
@@ -59,9 +60,22 @@ https://github.com/microsoft/vscode-webview-ui-toolkit-samples/tree/main/framewo
 
 */
 
+// Remove third-party unhandledRejection handlers (e.g., from winston bundled via @sap-cloud-sdk).
+// VS Code blocks process.exit() from extensions, so these handlers only produce noisy errors
+// when unrelated extensions trigger unhandled rejections in the shared extension host process.
+function removeThirdPartyRejectionHandlers() {
+	const listeners = process.listeners("unhandledRejection")
+	for (const listener of listeners) {
+		if (listener.name === "bound _unhandledRejection") {
+			process.removeListener("unhandledRejection", listener as NodeJS.UnhandledRejectionListener)
+		}
+	}
+}
+
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
+	removeThirdPartyRejectionHandlers()
 	setupHostProvider(context)
 
 	// Initialize hook discovery cache for performance optimization

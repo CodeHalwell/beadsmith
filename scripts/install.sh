@@ -14,9 +14,9 @@ DIM='\033[2m'
 NC='\033[0m' # No Color
 
 # Configuration
-INSTALL_DIR="${CLINE_INSTALL_DIR:-$HOME/.cline/cli}"
-GITHUB_REPO="cline/cline"
-requested_version="${CLINE_VERSION:-}"
+INSTALL_DIR="${BEADSMITH_INSTALL_DIR:-$HOME/.beadsmith/cli}"
+GITHUB_REPO="CodeHalwell/beadsmith"
+requested_version="${BEADSMITH_VERSION:-}"
 FORCE_INSTALL="${FORCE_INSTALL:-false}"
 
 # Detect OS and architecture
@@ -307,16 +307,16 @@ check_existing_installation() {
         return
     fi
     
-    if [ -d "$INSTALL_DIR/bin" ] && [ -f "$INSTALL_DIR/bin/cline" ]; then
-        # Extract version from cline binary
-        local installed_version=$("$INSTALL_DIR/bin/cline" version 2>/dev/null | head -1 | grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+' || echo "")
+    if [ -d "$INSTALL_DIR/bin" ] && [ -f "$INSTALL_DIR/bin/beadsmith" ]; then
+        # Extract version from beadsmith binary
+        local installed_version=$("$INSTALL_DIR/bin/beadsmith" version 2>/dev/null | head -1 | grep -o 'v[0-9]\+\.[0-9]\+\.[0-9]\+' || echo "")
         
         # Compare versions (remove -cli suffix for comparison)
         local cli_tag_version=$(echo "$cli_tag" | sed 's/-cli$//')
         
         if [ -n "$installed_version" ] && [ "$installed_version" = "$cli_tag_version" ]; then
             echo ""
-            print_ok "Cline ${MAGENTA}${BOLD}$installed_version${NC} already installed"
+            print_ok "Beadsmith ${MAGENTA}${BOLD}$installed_version${NC} already installed"
             echo ""
             print_message "$DIM" "Installation directory: $INSTALL_DIR"
             print_message "$DIM" "To reinstall, run: ${MAGENTA}rm -rf $INSTALL_DIR && <install command>${NC}"
@@ -331,8 +331,8 @@ check_existing_installation() {
 }
 
 # Download and install
-install_cline() {
-    print_step "Installing Cline"
+install_beadsmith() {
+    print_step "Installing Beadsmith"
     
     # Create temporary directory
     local tmp_dir=$(mktemp -d)
@@ -340,7 +340,7 @@ install_cline() {
     
     # Download with progress bar
     echo -e "${MAGENTA}${BOLD}"
-    local package_file="$tmp_dir/cline.tar.gz"
+    local package_file="$tmp_dir/beadsmith.tar.gz"
 
     if ! curl -#fSL -o "$package_file" "$download_url"; then
         echo -e "${NC}"
@@ -391,7 +391,7 @@ install_cline() {
         fi
     fi
     
-    print_ok "Cline installed to ${MAGENTA}${BOLD}$INSTALL_DIR${NC}"
+    print_ok "Beadsmith installed to ${MAGENTA}${BOLD}$INSTALL_DIR${NC}"
 }
 
 # Configure PATH
@@ -453,10 +453,10 @@ configure_path() {
     if ! grep -q "$bin_dir" "$config_file" 2>/dev/null; then
         case $current_shell in
             fish)
-                echo -e "\n# Cline CLI\nfish_add_path $bin_dir" >> "$config_file"
+                echo -e "\n# Beadsmith CLI\nfish_add_path $bin_dir" >> "$config_file"
                 ;;
             *)
-                echo -e "\n# Cline CLI\nexport PATH=\"$bin_dir:\$PATH\"" >> "$config_file"
+                echo -e "\n# Beadsmith CLI\nexport PATH=\"$bin_dir:\$PATH\"" >> "$config_file"
                 ;;
         esac
         
@@ -475,15 +475,15 @@ configure_path() {
 verify_installation() {
     print_step "Verifying installation"
     
-    local cline_bin="$INSTALL_DIR/bin/cline"
+    local beadsmith_bin="$INSTALL_DIR/bin/beadsmith"
     
-    if [ ! -f "$cline_bin" ]; then
-        print_error "Binary not found at $cline_bin"
+    if [ ! -f "$beadsmith_bin" ]; then
+        print_error "Binary not found at $beadsmith_bin"
         exit 1
     fi
     
-    if [ ! -x "$cline_bin" ]; then
-        chmod +x "$cline_bin"
+    if [ ! -x "$beadsmith_bin" ]; then
+        chmod +x "$beadsmith_bin"
     fi
     
     print_ok "Installation verified"
@@ -645,7 +645,7 @@ print_success() {
     echo ""
     print_box "Installation complete" "$GREEN$BOLD" 48
     echo ""
-    print_message "$NC" "Run this to start using ${MAGENTA}${BOLD}cline${NC} immediately:"
+    print_message "$NC" "Run this to start using ${MAGENTA}${BOLD}beadsmith${NC} immediately:"
     echo ""
     print_message "$YELLOW" "${BOLD}    exec \$SHELL"
     echo ""
@@ -656,13 +656,13 @@ print_success() {
 # Main installation flow
 main() {
     echo ""
-    print_box "CLINE IS COOKING" "$MAGENTA$BOLD" 48
+    print_box "BEADSMITH IS COOKING" "$MAGENTA$BOLD" 48
     echo ""
     print_ok "Platform: ${MAGENTA}${BOLD}$platform${NC}"    
     check_prerequisites
     get_release_info
     check_existing_installation
-    install_cline
+    install_beadsmith
     configure_path
     verify_installation
     print_success

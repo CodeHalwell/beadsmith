@@ -18,7 +18,7 @@ interface BeadsmithSharedMessageParam {
 	call_id?: string
 }
 
-export const REASONING_DETAILS_PROVIDERS = ["cline", "openrouter"]
+export const REASONING_DETAILS_PROVIDERS = ["beadsmith", "openrouter"]
 
 /**
  * An extension of Anthropic.MessageParam that includes Beadsmith-specific fields: reasoning_details.

@@ -54,7 +54,7 @@ export class WebFetchToolHandler implements IFullyManagedTool {
 			// Check if Beadsmith web tools are enabled (both user setting and feature flag)
 			const beadsmithWebToolsEnabled = config.services.stateManager.getGlobalSettingsKey("beadsmithWebToolsEnabled")
 			const featureFlagEnabled = featureFlagsService.getWebtoolsEnabled()
-			if (provider !== "cline" || !beadsmithWebToolsEnabled || !featureFlagEnabled) {
+			if (provider !== "beadsmith" || !beadsmithWebToolsEnabled || !featureFlagEnabled) {
 				return formatResponse.toolError("Beadsmith web tools are currently disabled.")
 			}
 
