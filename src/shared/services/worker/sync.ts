@@ -103,14 +103,14 @@ async function dispose(): Promise<void> {
  * @param key File key (e.g., "api_conversation_history.json")
  * @param data Data to sync
  */
-function enqueue(taskId: string, key: string, data: string): void {
+async function enqueue(taskId: string, key: string, data: string): Promise<void> {
 	try {
 		const queue = getSyncQueue()
 		if (!queue || !data || !key) {
 			return
 		}
 
-		queue.enqueue(taskId, key, data)
+		await queue.enqueue(taskId, key, data)
 	} catch (err) {
 		Logger.error(`Failed to enqueue ${taskId}/${key} for sync:`, err)
 	}

@@ -1,4 +1,4 @@
-import * as fs from "node:fs"
+import fs from "node:fs/promises"
 import * as path from "node:path"
 import { Logger } from "@/shared/services/Logger"
 import { SEVEN_DAYS_MS } from "./worker"
@@ -55,6 +55,8 @@ export class SyncQueue {
 	private static instance: SyncQueue | null = null
 	private writeTimeout: ReturnType<typeof setTimeout> | null = null
 	private isDirty = false
+	private initPromise: Promise<void>
+	private writePromise: Promise<void> | null = null
 
 	/**
 	 * Get the singleton instance.
@@ -79,28 +81,37 @@ export class SyncQueue {
 
 	private constructor(queuePath: string) {
 		this.queuePath = queuePath
+		// Start loading data
+		this.initPromise = this.load()
+	}
 
-		// Ensure directory exists
-		const dir = path.dirname(queuePath)
-		if (!fs.existsSync(dir)) {
-			fs.mkdirSync(dir, { recursive: true })
+	private async ensureDirectory(): Promise<void> {
+		const dir = path.dirname(this.queuePath)
+		try {
+			await fs.access(dir)
+		} catch {
+			await fs.mkdir(dir, { recursive: true })
 		}
-
-		// Load existing queue data
-		this.load()
 	}
 
 	/**
 	 * Load queue data from disk.
 	 */
-	private load(): void {
+	private async load(): Promise<void> {
 		try {
-			if (fs.existsSync(this.queuePath)) {
-				const content = fs.readFileSync(this.queuePath, "utf-8")
+			await this.ensureDirectory()
+			try {
+				const content = await fs.readFile(this.queuePath, "utf-8")
 				this.data = JSON.parse(content)
+			} catch (error: any) {
+				// Ignore ENOENT (file not found)
+				if (error.code !== "ENOENT") {
+					Logger.error("[SyncQueue] Failed to load queue data:", error)
+				}
+				this.data = { items: {} }
 			}
 		} catch (error) {
-			Logger.error("[SyncQueue] Failed to load queue data:", error)
+			Logger.error("[SyncQueue] Failed to initialize queue directory:", error)
 			this.data = { items: {} }
 		}
 	}
@@ -121,29 +132,59 @@ export class SyncQueue {
 	/**
 	 * Immediately write queue data to disk.
 	 */
-	private flush(): void {
+	private async flush(): Promise<void> {
 		if (this.writeTimeout) {
 			clearTimeout(this.writeTimeout)
 			this.writeTimeout = null
 		}
+
+		// If a write is already in progress, return the existing promise.
+		// If isDirty is set, the writePromise's finally block will schedule another write.
+		if (this.writePromise) {
+			return this.writePromise
+		}
+
 		if (!this.isDirty) {
 			return
 		}
-		try {
-			const tmpPath = `${this.queuePath}.tmp`
-			fs.writeFileSync(tmpPath, JSON.stringify(this.data, null, 2), "utf-8")
-			fs.renameSync(tmpPath, this.queuePath)
-			this.isDirty = false
-		} catch (error) {
-			Logger.error("[SyncQueue] Failed to write queue data:", error)
-		}
+
+		this.isDirty = false
+		this.writePromise = (async () => {
+			try {
+				await this.ensureDirectory()
+				const tmpPath = `${this.queuePath}.tmp`
+				// Serialize data synchronously before async I/O to ensure we capture current state
+				const content = JSON.stringify(this.data, null, 2)
+				await fs.writeFile(tmpPath, content, "utf-8")
+				await fs.rename(tmpPath, this.queuePath)
+			} catch (error) {
+				Logger.error("[SyncQueue] Failed to write queue data:", error)
+				this.isDirty = true // Mark as dirty so we retry
+			} finally {
+				this.writePromise = null
+				// If dirtied while writing, schedule another write
+				if (this.isDirty) {
+					this.scheduleWrite()
+				}
+			}
+		})()
+
+		return this.writePromise
 	}
 
 	/**
 	 * Close the queue and flush pending writes.
 	 */
-	close(): void {
-		this.flush()
+	async close(): Promise<void> {
+		await this.flush()
+		// Ensure any subsequent writes scheduled during the first flush are also completed
+		while (this.isDirty || this.writePromise) {
+			if (this.writePromise) {
+				await this.writePromise
+			} else {
+				await this.flush()
+			}
+		}
 	}
 
 	/**
@@ -154,7 +195,8 @@ export class SyncQueue {
 	 * @param key File key (e.g., "api_conversation_history.json")
 	 * @param data Data to sync
 	 */
-	enqueue(taskId: string, key: string, data: string): void {
+	async enqueue(taskId: string, key: string, data: string): Promise<void> {
+		await this.initPromise
 		const id = `${taskId}/${key}`
 		this.data.items[id] = {
 			id,
@@ -172,7 +214,8 @@ export class SyncQueue {
 	/**
 	 * Get all pending items that need to be synced.
 	 */
-	getPending(): SyncQueueItem[] {
+	async getPending(): Promise<SyncQueueItem[]> {
+		await this.initPromise
 		return Object.values(this.data.items)
 			.filter((item) => item.status === "pending")
 			.sort((a, b) => b.timestamp - a.timestamp)
@@ -181,14 +224,16 @@ export class SyncQueue {
 	/**
 	 * Get all items regardless of status.
 	 */
-	getAll(): SyncQueueItem[] {
+	async getAll(): Promise<SyncQueueItem[]> {
+		await this.initPromise
 		return Object.values(this.data.items).sort((a, b) => b.timestamp - a.timestamp)
 	}
 
 	/**
 	 * Get failed items that may need manual intervention or retry.
 	 */
-	getFailed(): SyncQueueItem[] {
+	async getFailed(): Promise<SyncQueueItem[]> {
+		await this.initPromise
 		return Object.values(this.data.items)
 			.filter((item) => item.status === "failed")
 			.sort((a, b) => a.timestamp - b.timestamp)
@@ -197,7 +242,8 @@ export class SyncQueue {
 	/**
 	 * Get a specific item by taskId and key.
 	 */
-	getItem(taskId: string, key: string): SyncQueueItem | undefined {
+	async getItem(taskId: string, key: string): Promise<SyncQueueItem | undefined> {
+		await this.initPromise
 		const id = `${taskId}/${key}`
 		return this.data.items[id]
 	}
@@ -209,7 +255,8 @@ export class SyncQueue {
 	 * @param key File key
 	 * @param remove Whether to remove the item after marking synced (default: false)
 	 */
-	markSynced(taskId: string, key: string, remove: boolean = false): void {
+	async markSynced(taskId: string, key: string, remove: boolean = false): Promise<void> {
+		await this.initPromise
 		const id = `${taskId}/${key}`
 		if (remove) {
 			delete this.data.items[id]
@@ -228,7 +275,8 @@ export class SyncQueue {
 	 * @param key File key
 	 * @param error Error message
 	 */
-	markFailed(taskId: string, key: string, error: string): void {
+	async markFailed(taskId: string, key: string, error: string): Promise<void> {
+		await this.initPromise
 		const id = `${taskId}/${key}`
 		const item = this.data.items[id]
 		if (item) {
@@ -245,7 +293,8 @@ export class SyncQueue {
 	 * @param taskId Task identifier
 	 * @param key File key
 	 */
-	resetToPending(taskId: string, key: string): void {
+	async resetToPending(taskId: string, key: string): Promise<void> {
+		await this.initPromise
 		const id = `${taskId}/${key}`
 		const item = this.data.items[id]
 		if (item) {
@@ -260,7 +309,8 @@ export class SyncQueue {
 	 * @param taskId Task identifier
 	 * @param key File key
 	 */
-	remove(taskId: string, key: string): void {
+	async remove(taskId: string, key: string): Promise<void> {
+		await this.initPromise
 		const id = `${taskId}/${key}`
 		delete this.data.items[id]
 		this.scheduleWrite()
@@ -272,7 +322,8 @@ export class SyncQueue {
 	 *
 	 * @param taskId Task identifier
 	 */
-	removeTask(taskId: string): void {
+	async removeTask(taskId: string): Promise<void> {
+		await this.initPromise
 		const keysToRemove = Object.keys(this.data.items).filter((id) => id.startsWith(`${taskId}/`))
 		for (const key of keysToRemove) {
 			delete this.data.items[key]
@@ -283,7 +334,8 @@ export class SyncQueue {
 	/**
 	 * Get statistics about the queue.
 	 */
-	getStats(): { pending: number; synced: number; failed: number; total: number } {
+	async getStats(): Promise<{ pending: number; synced: number; failed: number; total: number }> {
+		await this.initPromise
 		const items = Object.values(this.data.items)
 		return {
 			pending: items.filter((i) => i.status === "pending").length,
@@ -299,7 +351,8 @@ export class SyncQueue {
 	 * @param maxAgeMs Maximum age in milliseconds (default: 7 days)
 	 * @returns Number of items cleaned up
 	 */
-	cleanupOldSynced(maxAgeMs: number = SEVEN_DAYS_MS): number {
+	async cleanupOldSynced(maxAgeMs: number = SEVEN_DAYS_MS): Promise<number> {
+		await this.initPromise
 		const cutoff = Date.now() - maxAgeMs
 		let count = 0
 		Object.entries(this.data.items).forEach(([key, item]) => {
@@ -322,7 +375,8 @@ export class SyncQueue {
 	 * @param maxAgeMs Maximum age for failed items in milliseconds (default: 7 days)
 	 * @returns Number of items cleaned up
 	 */
-	cleanupFailedItems(maxRetries: number = 5, maxAgeMs: number = SEVEN_DAYS_MS): number {
+	async cleanupFailedItems(maxRetries: number = 5, maxAgeMs: number = SEVEN_DAYS_MS): Promise<number> {
+		await this.initPromise
 		const cutoff = Date.now() - maxAgeMs
 		let count = 0
 		Object.entries(this.data.items).forEach(([key, item]) => {
@@ -344,7 +398,8 @@ export class SyncQueue {
 	 * @param maxSize Maximum number of items to keep (default: 1000)
 	 * @returns Number of items evicted
 	 */
-	enforceMaxSize(maxSize: number = 1000): number {
+	async enforceMaxSize(maxSize: number = 1000): Promise<number> {
+		await this.initPromise
 		const items = Object.entries(this.data.items)
 		if (items.length <= maxSize) {
 			return 0
@@ -394,7 +449,8 @@ export class SyncQueue {
 	 *
 	 * @param items Array of items to enqueue
 	 */
-	enqueueBulk(items: Array<{ taskId: string; key: string; data: string }>): void {
+	async enqueueBulk(items: Array<{ taskId: string; key: string; data: string }>): Promise<void> {
+		await this.initPromise
 		const timestamp = Date.now()
 		for (const item of items) {
 			const id = `${item.taskId}/${item.key}`
@@ -417,7 +473,9 @@ export class SyncQueue {
 	 *
 	 * @param limit Maximum number of items to return
 	 */
-	getPendingBatch(limit: number): SyncQueueItem[] {
-		return this.getPending().slice(0, limit)
+	async getPendingBatch(limit: number): Promise<SyncQueueItem[]> {
+		await this.initPromise
+		const pending = await this.getPending()
+		return pending.slice(0, limit)
 	}
 }

@@ -211,7 +211,7 @@ export async function saveApiConversationHistory(taskId: string, apiConversation
 			const fileName = GlobalFileNames.apiConversationHistory
 			const data = JSON.stringify(apiConversationHistory)
 			// Queue for remote sync without blocking
-			syncWorker().enqueue(taskId, fileName, data)
+			await syncWorker().enqueue(taskId, fileName, data)
 			// Store locally
 			const filePath = path.join(await ensureTaskDirectoryExists(taskId), fileName)
 			await atomicWriteFile(filePath, data)

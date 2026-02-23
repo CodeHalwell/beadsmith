@@ -201,8 +201,8 @@ export class SyncWorker {
 			// Run cleanup to prevent unbounded queue growth
 			// This runs even if blob storage isn't ready, which is the main protection
 			// against misconfigured storage causing the queue to grow forever
-			this.queue.cleanupFailedItems(this.options.maxRetries, this.options.maxFailedAgeMs)
-			this.queue.enforceMaxSize(this.options.maxQueueSize)
+			await this.queue.cleanupFailedItems(this.options.maxRetries, this.options.maxFailedAgeMs)
+			await this.queue.enforceMaxSize(this.options.maxQueueSize)
 
 			if (!blobStorage.isReady()) {
 				// S3/R2 not configured, nothing more to do
@@ -210,7 +210,7 @@ export class SyncWorker {
 			}
 
 			// Get pending items
-			const batch = this.queue.getPendingBatch(this.options.batchSize)
+			const batch = await this.queue.getPendingBatch(this.options.batchSize)
 
 			if (batch.length === 0) {
 				return { successCount: 0, failCount: 0 }
@@ -231,12 +231,12 @@ export class SyncWorker {
 					await blobStorage.store(`tasks/${this.options.userDistinctId}/${item.taskId}/${item.key}`, data)
 
 					// Mark as synced and remove from queue (data is in S3 now)
-					this.queue.markSynced(item.taskId, item.key, true)
+					await this.queue.markSynced(item.taskId, item.key, true)
 					successCount++
 					this.emit({ type: WorkerEvent.WorkerItemSynced, item })
 				} catch (err) {
 					const errorMsg = err instanceof Error ? err.message : String(err)
-					this.queue.markFailed(item.taskId, item.key, errorMsg)
+					await this.queue.markFailed(item.taskId, item.key, errorMsg)
 					failCount++
 					this.emit({ type: WorkerEvent.WorkerItemFailed, item, error: errorMsg })
 					Logger.error(`Failed to sync ${item.taskId}/${item.key}:`, err)
