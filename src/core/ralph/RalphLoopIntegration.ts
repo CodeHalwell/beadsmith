@@ -123,8 +123,10 @@ export class RalphLoopIntegration extends EventEmitter {
 		// Create or destroy bead manager based on beadsEnabled
 		if (config.beadsEnabled && !this.beadManager) {
 			this.beadManager = createBeadManager(this.workspaceRoot)
+			this.controller.setBeadManager(this.beadManager)
 		} else if (config.beadsEnabled === false && this.beadManager) {
 			this.beadManager = null
+			this.controller.setBeadManager(null)
 		}
 	}
 
