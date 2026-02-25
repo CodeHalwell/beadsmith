@@ -137,13 +137,11 @@ if (production) {
 if (process.env.CLINE_ENVIRONMENT) {
 	buildEnvVars["process.env.CLINE_ENVIRONMENT"] = JSON.stringify(process.env.CLINE_ENVIRONMENT)
 }
-if (process.env.TELEMETRY_SERVICE_API_KEY) {
-	buildEnvVars["process.env.TELEMETRY_SERVICE_API_KEY"] = JSON.stringify(process.env.TELEMETRY_SERVICE_API_KEY)
-}
-if (process.env.ERROR_SERVICE_API_KEY) {
-	buildEnvVars["process.env.ERROR_SERVICE_API_KEY"] = JSON.stringify(process.env.ERROR_SERVICE_API_KEY)
-}
 
+// Preserve PostHog/API keys as runtime environment lookups so they are not hardcoded into the bundle
+// but still resolve correctly in packaged builds.
+buildEnvVars["process.env.TELEMETRY_SERVICE_API_KEY"] = "process.env.TELEMETRY_SERVICE_API_KEY"
+buildEnvVars["process.env.ERROR_SERVICE_API_KEY"] = "process.env.ERROR_SERVICE_API_KEY"
 // OpenTelemetry configuration (injected at build time from GitHub secrets)
 // These provide production defaults that can be overridden at runtime via environment variables
 if (process.env.OTEL_TELEMETRY_ENABLED) {

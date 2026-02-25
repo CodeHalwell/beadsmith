@@ -98,6 +98,27 @@ export async function* runClaudeCode(options: ClaudeCodeOptions): AsyncGenerator
 			)
 		}
 	} catch (err) {
+		// Sanitize error object to prevent secrets in command arguments from leaking to telemetry
+		// Execa errors contain the full command line in the message and properties
+		if (err instanceof Error) {
+			// Remove command-line arguments from error message
+			// The error message typically looks like: "Command failed with exit code 1: <command> <args...>"
+			const delimiter = ": "
+			const delimiterIndex = err.message.indexOf(delimiter)
+			if (delimiterIndex !== -1) {
+				const prefix = err.message.substring(0, delimiterIndex + delimiter.length)
+				err.message = `${prefix}[command redacted]`
+			}
+
+			// Clear potentially sensitive properties from execa error
+			const sensitiveProps = ["command", "escapedCommand", "stdout", "stderr"]
+			sensitiveProps.forEach((prop) => {
+				if (prop in err) {
+					;(err as any)[prop] = "[Redacted]"
+				}
+			})
+		}
+
 		Logger.error(`Error during Claude Code execution:`, err)
 
 		if (processState.stderrLogs.includes("unknown option '--system-prompt-file'")) {

@@ -91,14 +91,14 @@ export async function backfillTask(taskId: string): Promise<BackfillTaskResult> 
 			result.error = "S3 storage not configured"
 			return result
 		}
-		const existingItem = queue.getItem(taskId, GlobalFileNames.apiConversationHistory)
+		const existingItem = await queue.getItem(taskId, GlobalFileNames.apiConversationHistory)
 		if (existingItem?.status === "synced") {
 			// Already synced, skip
 			return result
 		}
 		try {
 			const data = await getSavedApiConversationHistory(taskId)
-			queue.enqueue(taskId, GlobalFileNames.apiConversationHistory, JSON.stringify(data))
+			await queue.enqueue(taskId, GlobalFileNames.apiConversationHistory, JSON.stringify(data))
 			result.filesQueued.push(taskId)
 		} catch (err) {
 			if ((err as NodeJS.ErrnoException).code !== "ENOENT") {
