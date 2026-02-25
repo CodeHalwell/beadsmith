@@ -167,6 +167,13 @@ export class RalphLoopController extends EventEmitter {
 	}
 
 	/**
+	 * Set the BeadManager instance.
+	 */
+	setBeadManager(beadManager: BeadManager | null): void {
+		this.beadManager = beadManager
+	}
+
+	/**
 	 * Check if the loop is currently running.
 	 */
 	isRunning(): boolean {

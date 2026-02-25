@@ -240,7 +240,7 @@ export class BeadManager extends EventEmitter {
 		const criteriaResult = await this.evaluateSuccessCriteria(bead, response)
 		this.state.lastCriteriaResult = criteriaResult
 
-		if (!criteriaResult.allPassed && bead.iterationCount < this.config.maxIterations) {
+		if (!criteriaResult.allPassed && bead.iterationCount < this.config.maxIterations - 1) {
 			// Criteria not met, can retry
 			bead.iterationCount++
 			this.state.totalIterationCount++

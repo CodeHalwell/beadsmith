@@ -156,123 +156,128 @@ function parseFile(filePath) {
 		},
 
 		// Class declarations
-		ClassDeclaration(nodePath) {
-			const node = nodePath.node
-			if (!node.id) return
+		ClassDeclaration: {
+			enter(nodePath) {
+				const node = nodePath.node
+				if (!node.id) return
 
-			const className = node.id.name
-			const classId = `${filePath}:${className}`
-			const line = node.loc?.start.line || 1
+				const className = node.id.name
+				const classId = `${filePath}:${className}`
+				const line = node.loc?.start.line || 1
 
-			nodes.push({
-				id: classId,
-				type: "class",
-				file_path: filePath,
-				line_number: line,
-				name: className,
-				docstring: extractLeadingComment(nodePath),
-				end_line_number: node.loc?.end.line,
-			})
+				nodes.push({
+					id: classId,
+					type: "class",
+					file_path: filePath,
+					line_number: line,
+					name: className,
+					docstring: extractLeadingComment(nodePath),
+					end_line_number: node.loc?.end.line,
+				})
 
-			// Track inheritance
-			if (node.superClass) {
-				const superName = getNameFromNode(node.superClass)
-				if (superName) {
-					edges.push({
-						from_node: classId,
-						to_node: resolveReference(superName, imports, filePath),
-						edge_type: "inherit",
-						confidence: getConfidence(superName, imports),
-						line_number: line,
-						label: `extends ${superName}`,
-					})
-				}
-			}
-
-			// Track implemented interfaces (TypeScript)
-			if (node.implements) {
-				for (const impl of node.implements) {
-					const implName = getNameFromNode(impl.expression || impl)
-					if (implName) {
+				// Track inheritance
+				if (node.superClass) {
+					const superName = getNameFromNode(node.superClass)
+					if (superName) {
 						edges.push({
 							from_node: classId,
-							to_node: resolveReference(implName, imports, filePath),
+							to_node: resolveReference(superName, imports, filePath),
 							edge_type: "inherit",
-							confidence: getConfidence(implName, imports),
+							confidence: getConfidence(superName, imports),
 							line_number: line,
-							label: `implements ${implName}`,
+							label: `extends ${superName}`,
 						})
 					}
 				}
-			}
 
-			currentClass = className
-			currentClassId = classId
-		},
+				// Track implemented interfaces (TypeScript)
+				if (node.implements) {
+					for (const impl of node.implements) {
+						const implName = getNameFromNode(impl.expression || impl)
+						if (implName) {
+							edges.push({
+								from_node: classId,
+								to_node: resolveReference(implName, imports, filePath),
+								edge_type: "inherit",
+								confidence: getConfidence(implName, imports),
+								line_number: line,
+								label: `implements ${implName}`,
+							})
+						}
+					}
+				}
 
-		"ClassDeclaration:exit"() {
-			currentClass = null
-			currentClassId = null
+				currentClass = className
+				currentClassId = classId
+			},
+			exit() {
+				currentClass = null
+				currentClassId = null
+			},
 		},
 
 		// Class methods
-		ClassMethod(nodePath) {
-			const node = nodePath.node
-			const methodName = node.key.name || node.key.value
-			if (!methodName) return
+		ClassMethod: {
+			enter(nodePath) {
+				const node = nodePath.node
+				const methodName = node.key.name || node.key.value
+				if (!methodName) return
 
-			const methodId = currentClass ? `${filePath}:${currentClass}.${methodName}` : `${filePath}:${methodName}`
-			const line = node.loc?.start.line || 1
+				const methodId = currentClass
+					? `${filePath}:${currentClass}.${methodName}`
+					: `${filePath}:${methodName}`
+				const line = node.loc?.start.line || 1
 
-			nodes.push({
-				id: methodId,
-				type: "method",
-				file_path: filePath,
-				line_number: line,
-				name: methodName,
-				docstring: extractLeadingComment(nodePath),
-				parameters: extractParameters(node.params),
-				return_type: extractReturnType(node),
-				end_line_number: node.loc?.end.line,
-			})
+				nodes.push({
+					id: methodId,
+					type: "method",
+					file_path: filePath,
+					line_number: line,
+					name: methodName,
+					docstring: extractLeadingComment(nodePath),
+					parameters: extractParameters(node.params),
+					return_type: extractReturnType(node),
+					end_line_number: node.loc?.end.line,
+				})
 
-			currentFunction = methodName
-			currentFunctionId = methodId
-		},
-
-		"ClassMethod:exit"() {
-			currentFunction = null
-			currentFunctionId = null
+				currentFunction = methodName
+				currentFunctionId = methodId
+			},
+			exit() {
+				currentFunction = null
+				currentFunctionId = null
+			},
 		},
 
 		// Function declarations
-		FunctionDeclaration(nodePath) {
-			const node = nodePath.node
-			if (!node.id) return
+		FunctionDeclaration: {
+			enter(nodePath) {
+				const node = nodePath.node
+				if (!node.id) return
 
-			const funcName = node.id.name
-			const funcId = `${filePath}:${funcName}`
-			const line = node.loc?.start.line || 1
+				const funcName = node.id.name
+				const funcId = `${filePath}:${funcName}`
+				const line = node.loc?.start.line || 1
 
-			nodes.push({
-				id: funcId,
-				type: "function",
-				file_path: filePath,
-				line_number: line,
-				name: funcName,
-				docstring: extractLeadingComment(nodePath),
-				parameters: extractParameters(node.params),
-				return_type: extractReturnType(node),
-				end_line_number: node.loc?.end.line,
-			})
+				nodes.push({
+					id: funcId,
+					type: "function",
+					file_path: filePath,
+					line_number: line,
+					name: funcName,
+					docstring: extractLeadingComment(nodePath),
+					parameters: extractParameters(node.params),
+					return_type: extractReturnType(node),
+					end_line_number: node.loc?.end.line,
+				})
 
-			currentFunction = funcName
-			currentFunctionId = funcId
-		},
-
-		"FunctionDeclaration:exit"() {
-			currentFunction = null
-			currentFunctionId = null
+				currentFunction = funcName
+				currentFunctionId = funcId
+			},
+			exit() {
+				currentFunction = null
+				currentFunctionId = null
+			},
 		},
 
 		// Arrow functions assigned to variables
@@ -300,12 +305,12 @@ function parseFile(filePath) {
 			})
 		},
 
-		// Function/method calls
-		CallExpression(nodePath) {
+		// Function/method calls and constructor calls
+		"CallExpression|NewExpression"(nodePath) {
 			const callerId = currentFunctionId || filePath
 
-			// Handle dynamic imports
-			if (nodePath.node.callee.type === "Import") {
+			// Handle dynamic imports (CallExpression only)
+			if (nodePath.type === "CallExpression" && nodePath.node.callee.type === "Import") {
 				const arg = nodePath.node.arguments[0]
 				const line = nodePath.node.loc?.start.line || 1
 
