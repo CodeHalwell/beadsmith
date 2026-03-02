@@ -6,6 +6,7 @@ import { DEFAULT_PLATFORM, type ExtensionState } from "@shared/ExtensionMessage"
 import { DEFAULT_FOCUS_CHAIN_SETTINGS } from "@shared/FocusChainSettings"
 import { DEFAULT_MCP_DISPLAY_MODE } from "@shared/McpDisplayMode"
 import type { UserInfo } from "@shared/proto/beadsmith/account"
+import { BeadStatus, BeadTaskStatus } from "@shared/proto/beadsmith/bead"
 import { EmptyRequest } from "@shared/proto/beadsmith/common"
 import type { OpenRouterCompatibleModelInfo } from "@shared/proto/beadsmith/models"
 import { OnboardingModelGroup, type TerminalProfile } from "@shared/proto/beadsmith/state"
@@ -27,7 +28,13 @@ import {
 } from "../../../src/shared/api"
 import { Environment } from "../../../src/shared/config-types"
 import type { McpMarketplaceCatalog, McpServer, McpViewTab } from "../../../src/shared/mcp"
-import { McpServiceClient, ModelsServiceClient, StateServiceClient, UiServiceClient } from "../services/grpc-client"
+import {
+	BeadServiceClient,
+	McpServiceClient,
+	ModelsServiceClient,
+	StateServiceClient,
+	UiServiceClient,
+} from "../services/grpc-client"
 
 export interface ExtensionStateContextType extends ExtensionState {
 	didHydrateState: boolean
@@ -371,6 +378,7 @@ export const ExtensionStateContextProvider: React.FC<{
 	const liteLlmModelsUnsubscribeRef = useRef<(() => void) | null>(null)
 	const workspaceUpdatesUnsubscribeRef = useRef<(() => void) | null>(null)
 	const relinquishControlUnsubscribeRef = useRef<(() => void) | null>(null)
+	const beadUpdateUnsubscribeRef = useRef<(() => void) | null>(null)
 
 	// Add ref for callbacks
 	const relinquishControlCallbacks = useRef<Set<() => void>>(new Set())
@@ -662,6 +670,39 @@ export const ExtensionStateContextProvider: React.FC<{
 			onComplete: () => {},
 		})
 
+		// Subscribe to bead update events for real-time bead streaming
+		beadUpdateUnsubscribeRef.current = BeadServiceClient.subscribeToBeadUpdates(EmptyRequest.create({}), {
+			onResponse: (event) => {
+				// Convert proto BeadTaskStatus enum to string union for ExtensionState
+				const taskStatusMap: Record<BeadTaskStatus, ExtensionState["beadTaskStatus"]> = {
+					[BeadTaskStatus.BEAD_TASK_STATUS_UNSPECIFIED]: "idle",
+					[BeadTaskStatus.BEAD_TASK_STATUS_IDLE]: "idle",
+					[BeadTaskStatus.BEAD_TASK_STATUS_RUNNING]: "running",
+					[BeadTaskStatus.BEAD_TASK_STATUS_PAUSED]: "paused",
+					[BeadTaskStatus.BEAD_TASK_STATUS_AWAITING_APPROVAL]: "awaiting_approval",
+					[BeadTaskStatus.BEAD_TASK_STATUS_COMPLETED]: "completed",
+					[BeadTaskStatus.BEAD_TASK_STATUS_FAILED]: "failed",
+					[BeadTaskStatus.UNRECOGNIZED]: "idle",
+				}
+
+				setState((prevState) => ({
+					...prevState,
+					currentBeadNumber: event.bead?.beadNumber ?? prevState.currentBeadNumber,
+					beadTaskStatus: taskStatusMap[event.taskStatus] ?? prevState.beadTaskStatus,
+					totalBeadsCompleted:
+						event.bead?.status === BeadStatus.BEAD_STATUS_APPROVED
+							? (prevState.totalBeadsCompleted ?? 0) + 1
+							: prevState.totalBeadsCompleted,
+				}))
+			},
+			onError: (error) => {
+				console.error("Bead update subscription error:", error)
+			},
+			onComplete: () => {
+				console.log("Bead update subscription completed")
+			},
+		})
+
 		// Clean up subscriptions when component unmounts
 		return () => {
 			if (stateSubscriptionRef.current) {
@@ -719,6 +760,10 @@ export const ExtensionStateContextProvider: React.FC<{
 			if (mcpServersSubscriptionRef.current) {
 				mcpServersSubscriptionRef.current()
 				mcpServersSubscriptionRef.current = null
+			}
+			if (beadUpdateUnsubscribeRef.current) {
+				beadUpdateUnsubscribeRef.current()
+				beadUpdateUnsubscribeRef.current = null
 			}
 		}
 	}, [])
