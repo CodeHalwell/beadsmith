@@ -1,5 +1,20 @@
 # Changelog
 
+## 3.55.1
+
+### Patch Changes
+
+- 808dd42: Lock the LiteLLM Api Key input when it's remotely configured
+- 2670a4a: updated welcome card content and added ability to close each card
+- 4eb89a2: Add Ralph Wiggum Loop, Beads system, and DAG engine with full UI integration.
+
+  - Real-time bead streaming from backend to webview
+  - Collapsible diff viewer in bead review using react-diff-viewer-continued
+  - DAG-bead visual integration with change overlay and "View in DAG" button
+  - Bead history panel with vertical timeline in task header
+  - Integration tests for Ralph+Bead, Bead+DAG, and DAG Python engine
+  - E2E smoke test for bead workflow
+
 ## [3.55.0]
 
 - Add new model: Arcee Trinity Large Preview
