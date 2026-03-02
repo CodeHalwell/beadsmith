@@ -1244,6 +1244,10 @@ export class Controller {
 			beadTestCommand: this.stateManager.getGlobalSettingsKey("beadTestCommand"),
 			ralphMaxIterations: this.stateManager.getGlobalSettingsKey("ralphMaxIterations"),
 			ralphTokenBudget: this.stateManager.getGlobalSettingsKey("ralphTokenBudget"),
+			// Bead runtime state
+			currentBeadNumber: this._beadManager?.getState().currentBeadNumber ?? 0,
+			beadTaskStatus: this._beadManager?.getState().status ?? "idle",
+			totalBeadsCompleted: this._beadManager?.getState().beads.filter((b) => b.status === "approved").length ?? 0,
 			// DAG state
 			dagEnabled: this.stateManager.getGlobalSettingsKey("dagEnabled"),
 			dagIsAnalyzing: this.dagIsAnalyzing,
