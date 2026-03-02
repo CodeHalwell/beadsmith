@@ -43,6 +43,8 @@ type ViewMode = "list" | "graph"
 interface DagPanelProps {
 	className?: string
 	onDone?: () => void
+	/** File paths changed in the current bead, used to highlight nodes in the graph */
+	beadChangedFiles?: string[]
 }
 
 // Node type icons
@@ -189,7 +191,7 @@ const FileNode = memo<{
 
 FileNode.displayName = "FileNode"
 
-export const DagPanel = memo<DagPanelProps>(({ className, onDone }) => {
+export const DagPanel = memo<DagPanelProps>(({ className, onDone, beadChangedFiles }) => {
 	const { dagEnabled } = useExtensionState()
 	const [status, setStatus] = useState<DagServiceStatus | null>(null)
 	const [graph, setGraph] = useState<ProjectGraph | null>(null)
@@ -307,6 +309,18 @@ export const DagPanel = memo<DagPanelProps>(({ className, onDone }) => {
 		return impactSet
 	}, [selectedNode, graph])
 
+	// Compute bead changed node IDs by matching file paths against graph nodes
+	const beadChangedNodeIds = useMemo(() => {
+		if (!beadChangedFiles?.length || !graph) return undefined
+		const ids = new Set<string>()
+		for (const node of graph.nodes) {
+			if (beadChangedFiles.some((f) => node.filePath.endsWith(f) || node.id.includes(f))) {
+				ids.add(node.id)
+			}
+		}
+		return ids.size > 0 ? ids : undefined
+	}, [beadChangedFiles, graph])
+
 	// Group nodes by file
 	const groupedNodes = graph ? groupNodesByFile(graph.nodes) : new Map()
 
@@ -389,6 +403,7 @@ export const DagPanel = memo<DagPanelProps>(({ className, onDone }) => {
 				{graph && groupedNodes.size > 0 ? (
 					viewMode === "graph" ? (
 						<ForceGraph
+							beadChangedNodeIds={beadChangedNodeIds}
 							edges={graph.edges}
 							height={graphDimensions.height}
 							impactNodeIds={impactNodeIds}

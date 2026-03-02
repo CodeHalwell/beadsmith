@@ -26,6 +26,7 @@ const AppContent = () => {
 		showAccount,
 		showWorktrees,
 		showDag,
+		dagBeadChangedFiles,
 		showAnnouncement,
 		onboardingModels,
 		setShowAnnouncement,
@@ -70,7 +71,7 @@ const AppContent = () => {
 			{showMcp && <McpView initialTab={mcpTab} onDone={closeMcpView} />}
 			{showAccount && <AccountView onDone={hideAccount} />}
 			{showWorktrees && <WorktreesView onDone={hideWorktrees} />}
-			{showDag && <DagPanel className="h-full" onDone={hideDag} />}
+			{showDag && <DagPanel beadChangedFiles={dagBeadChangedFiles} className="h-full" onDone={hideDag} />}
 			{/* Do not conditionally load ChatView, it's expensive and there's state we don't want to lose (user input, disableInput, askResponse promise, etc.) */}
 			<ChatView
 				hideAnnouncement={hideAnnouncement}

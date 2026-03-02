@@ -18,6 +18,8 @@ interface ForceGraphProps {
 	selectedNodeId?: string
 	/** IDs of nodes that are in the impact path of the selected node */
 	impactNodeIds?: Set<string>
+	/** IDs of nodes corresponding to files changed in the current bead */
+	beadChangedNodeIds?: Set<string>
 	className?: string
 }
 
@@ -61,7 +63,7 @@ interface D3Edge extends d3.SimulationLinkDatum<D3Node> {
 }
 
 export const ForceGraph = memo<ForceGraphProps>(
-	({ nodes, edges, width = 800, height = 600, onNodeClick, selectedNodeId, impactNodeIds, className }) => {
+	({ nodes, edges, width = 800, height = 600, onNodeClick, selectedNodeId, impactNodeIds, beadChangedNodeIds, className }) => {
 		const svgRef = useRef<SVGSVGElement>(null)
 		const [tooltip, setTooltip] = useState<{ x: number; y: number; content: string } | null>(null)
 
@@ -209,23 +211,36 @@ export const ForceGraph = memo<ForceGraphProps>(
 						}),
 				)
 
-			// Node circles - highlight impact path nodes
+			// Node circles - highlight bead changed, impact path, and selected nodes
 			node.append("circle")
 				.attr("r", (d) => (d.type === 1 ? 12 : 8)) // Files are larger
 				.attr("fill", (d) => {
+					if (beadChangedNodeIds?.has(d.id)) return NODE_COLORS[d.type] || "#6b7280" // Keep type color, ring highlights
 					if (d.id === selectedNodeId) return "#ef4444" // Selected node in red
 					if (impactNodeIds?.has(d.id)) return "#f97316" // Impact path nodes in orange
 					return NODE_COLORS[d.type] || "#6b7280"
 				})
 				.attr("stroke", (d) => {
+					// Priority: beadChanged (red ring) > selected (white) > impact (gold)
+					if (beadChangedNodeIds?.has(d.id)) return "#ef4444" // Red stroke ring for bead changed
 					if (d.id === selectedNodeId) return "#fff"
 					if (impactNodeIds?.has(d.id)) return "#fbbf24" // Gold stroke for impact nodes
 					return "none"
 				})
-				.attr("stroke-width", (d) => (d.id === selectedNodeId || impactNodeIds?.has(d.id) ? 2 : 0))
+				.attr("stroke-width", (d) => {
+					if (beadChangedNodeIds?.has(d.id)) return 3 // Bead changed nodes get 3px ring
+					if (d.id === selectedNodeId || impactNodeIds?.has(d.id)) return 2
+					return 0
+				})
 				.attr("opacity", (d) => {
-					// Dim non-impact nodes when impact path is shown
-					if (impactNodeIds && impactNodeIds.size > 0 && !impactNodeIds.has(d.id) && d.id !== selectedNodeId) {
+					// Dim non-impact nodes when impact path is shown (but keep bead changed nodes visible)
+					if (
+						impactNodeIds &&
+						impactNodeIds.size > 0 &&
+						!impactNodeIds.has(d.id) &&
+						d.id !== selectedNodeId &&
+						!beadChangedNodeIds?.has(d.id)
+					) {
 						return 0.3
 					}
 					return 1
@@ -313,6 +328,17 @@ export const ForceGraph = memo<ForceGraphProps>(
 							Method
 						</span>
 					</div>
+					{beadChangedNodeIds && beadChangedNodeIds.size > 0 && (
+						<div className="mt-1 pt-1 border-t border-foreground/10">
+							<span className="flex items-center gap-1">
+								<span
+									className="w-2 h-2 rounded-full border-2"
+									style={{ borderColor: "#ef4444", backgroundColor: "transparent" }}
+								/>
+								Bead Changed
+							</span>
+						</div>
+					)}
 				</div>
 			</div>
 		)

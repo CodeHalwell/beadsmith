@@ -24,12 +24,14 @@ import {
 	FileTextIcon,
 	GitBranchIcon,
 	LoaderCircleIcon,
+	NetworkIcon,
 	SkipForwardIcon,
 	ThumbsDownIcon,
 	ThumbsUpIcon,
 	XIcon,
 } from "lucide-react"
 import { memo, useCallback, useMemo, useState } from "react"
+import { useExtensionState } from "@/context/ExtensionStateContext"
 import { cn } from "@/lib/utils"
 import { BeadServiceClient } from "@/services/grpc-client"
 import { BeadDiffViewer } from "./BeadDiffViewer"
@@ -164,6 +166,7 @@ BeadFailedMessage.displayName = "BeadFailedMessage"
  * Renders a bead_review message (ask type).
  */
 export const BeadReviewMessage = memo(({ message, isLast }: BeadMessageProps) => {
+	const { dagEnabled, navigateToDag } = useExtensionState()
 	const [isLoading, setIsLoading] = useState(false)
 	const [showRejectInput, setShowRejectInput] = useState(false)
 	const [rejectFeedback, setRejectFeedback] = useState("")
@@ -239,6 +242,11 @@ export const BeadReviewMessage = memo(({ message, isLast }: BeadMessageProps) =>
 		setShowRejectInput(false)
 		setRejectFeedback("")
 	}, [])
+
+	const handleViewInDag = useCallback(() => {
+		const filePaths = info.filesChanged.map((f) => f.filePath).filter(Boolean)
+		navigateToDag(filePaths)
+	}, [info.filesChanged, navigateToDag])
 
 	return (
 		<div className="bg-quote border border-editor-group-border rounded-sm py-2.5 px-3">
@@ -365,6 +373,19 @@ export const BeadReviewMessage = memo(({ message, isLast }: BeadMessageProps) =>
 											</span>
 										))}
 									</div>
+								</div>
+							)}
+
+							{/* View in DAG button */}
+							{dagEnabled && info.filesChanged.length > 0 && (
+								<div className="pt-2 border-t border-warning/10">
+									<button
+										className="flex items-center gap-1.5 px-2 py-1 bg-link/10 text-link border border-link/20 rounded-sm text-[11px] hover:bg-link/20 transition-colors"
+										onClick={handleViewInDag}
+										type="button">
+										<NetworkIcon className="size-3" />
+										View in DAG
+									</button>
 								</div>
 							)}
 						</div>

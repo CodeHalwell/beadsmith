@@ -67,6 +67,7 @@ export interface ExtensionStateContextType extends ExtensionState {
 	showAccount: boolean
 	showWorktrees: boolean
 	showDag: boolean
+	dagBeadChangedFiles?: string[]
 	showAnnouncement: boolean
 	showChatModelSelector: boolean
 	expandTaskHeader: boolean
@@ -116,7 +117,7 @@ export interface ExtensionStateContextType extends ExtensionState {
 	navigateToHistory: () => void
 	navigateToAccount: () => void
 	navigateToWorktrees: () => void
-	navigateToDag: () => void
+	navigateToDag: (beadChangedFiles?: string[]) => void
 	navigateToChat: () => void
 
 	// Hide functions
@@ -148,6 +149,7 @@ export const ExtensionStateContextProvider: React.FC<{
 	const [showAccount, setShowAccount] = useState(false)
 	const [showWorktrees, setShowWorktrees] = useState(false)
 	const [showDag, setShowDag] = useState(false)
+	const [dagBeadChangedFiles, setDagBeadChangedFiles] = useState<string[] | undefined>(undefined)
 	const [showAnnouncement, setShowAnnouncement] = useState(false)
 	const [showChatModelSelector, setShowChatModelSelector] = useState(false)
 
@@ -166,7 +168,10 @@ export const ExtensionStateContextProvider: React.FC<{
 	const hideHistory = useCallback(() => setShowHistory(false), [setShowHistory])
 	const hideAccount = useCallback(() => setShowAccount(false), [setShowAccount])
 	const hideWorktrees = useCallback(() => setShowWorktrees(false), [setShowWorktrees])
-	const hideDag = useCallback(() => setShowDag(false), [setShowDag])
+	const hideDag = useCallback(() => {
+		setShowDag(false)
+		setDagBeadChangedFiles(undefined)
+	}, [setShowDag])
 	const hideAnnouncement = useCallback(() => setShowAnnouncement(false), [setShowAnnouncement])
 	const hideChatModelSelector = useCallback(() => setShowChatModelSelector(false), [setShowChatModelSelector])
 
@@ -241,14 +246,18 @@ export const ExtensionStateContextProvider: React.FC<{
 		setShowWorktrees(true)
 	}, [setShowSettings, closeMcpView, setShowHistory, setShowAccount, setShowDag, setShowWorktrees])
 
-	const navigateToDag = useCallback(() => {
-		setShowSettings(false)
-		closeMcpView()
-		setShowHistory(false)
-		setShowAccount(false)
-		setShowWorktrees(false)
-		setShowDag(true)
-	}, [setShowSettings, closeMcpView, setShowHistory, setShowAccount, setShowWorktrees, setShowDag])
+	const navigateToDag = useCallback(
+		(beadChangedFiles?: string[]) => {
+			setShowSettings(false)
+			closeMcpView()
+			setShowHistory(false)
+			setShowAccount(false)
+			setShowWorktrees(false)
+			setDagBeadChangedFiles(beadChangedFiles)
+			setShowDag(true)
+		},
+		[setShowSettings, closeMcpView, setShowHistory, setShowAccount, setShowWorktrees, setShowDag],
+	)
 
 	const navigateToChat = useCallback(() => {
 		setShowSettings(false)
@@ -870,6 +879,7 @@ export const ExtensionStateContextProvider: React.FC<{
 		showAccount,
 		showWorktrees,
 		showDag,
+		dagBeadChangedFiles,
 		showAnnouncement,
 		showChatModelSelector,
 		globalBeadsmithRulesToggles: state.globalBeadsmithRulesToggles || {},
