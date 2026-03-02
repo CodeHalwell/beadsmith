@@ -1,7 +1,7 @@
 # Beadsmith
 
 <p align="center">
-  <img src="./assets/icons/beadsmith-bot.svg" width="128" height="128" alt="Beadsmith Logo" />
+  <img src="./assets/icons/icon.png" width="128" height="128" alt="Beadsmith Logo" />
 </p>
 
 <div align="center">
