@@ -46,6 +46,7 @@
 		"posthog-js": "^1.224.0",
 		"pretty-bytes": "^6.1.1",
 		"react": "^18.3.1",
+		"react-diff-viewer-continued": "^4.1.2",
 		"react-dom": "^18.3.1",
 		"react-remark": "^2.1.0",
 		"react-textarea-autosize": "^8.5.7",
