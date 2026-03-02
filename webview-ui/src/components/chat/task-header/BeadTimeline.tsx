@@ -13,12 +13,14 @@ import {
 	CircleAlertIcon,
 	CirclePauseIcon,
 	CirclePlayIcon,
+	HistoryIcon,
 	LoaderCircleIcon,
 	XCircleIcon,
 } from "lucide-react"
 import { memo, useCallback, useState } from "react"
 import { useExtensionState } from "@/context/ExtensionStateContext"
 import { cn } from "@/lib/utils"
+import { BeadHistoryPanel } from "../BeadHistoryPanel"
 
 interface BeadTimelineProps {
 	className?: string
@@ -78,9 +80,15 @@ const getStatusColor = (status: BeadTaskStatus) => {
 export const BeadTimeline = memo<BeadTimelineProps>(({ className }) => {
 	const { beadsEnabled, currentBeadNumber, beadTaskStatus, totalBeadsCompleted } = useExtensionState()
 	const [isExpanded, setIsExpanded] = useState(false)
+	const [showHistory, setShowHistory] = useState(false)
 
 	const toggleExpanded = useCallback(() => {
 		setIsExpanded((prev) => !prev)
+	}, [])
+
+	const toggleHistory = useCallback((e: React.MouseEvent) => {
+		e.stopPropagation()
+		setShowHistory((prev) => !prev)
 	}, [])
 
 	// Don't render if beads are not enabled or no task is active
@@ -158,6 +166,27 @@ export const BeadTimeline = memo<BeadTimelineProps>(({ className }) => {
 									{status === "awaiting_approval" ? "Review required" : "In progress..."}
 								</span>
 							</div>
+						</div>
+					)}
+
+					{/* History toggle button */}
+					<div className="mt-2 pt-2 border-t border-foreground/10">
+						<button
+							className={cn(
+								"flex items-center gap-1.5 text-xs cursor-pointer transition-colors",
+								showHistory ? "text-link" : "opacity-60 hover:opacity-100",
+							)}
+							onClick={toggleHistory}
+							type="button">
+							<HistoryIcon className="size-3.5" />
+							<span>{showHistory ? "Hide History" : "Show History"}</span>
+						</button>
+					</div>
+
+					{/* Bead history panel */}
+					{showHistory && (
+						<div className="mt-2 pt-1 border-t border-foreground/10 max-h-64 overflow-y-auto">
+							<BeadHistoryPanel />
 						</div>
 					)}
 				</div>
