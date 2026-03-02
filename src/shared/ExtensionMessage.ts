@@ -383,6 +383,12 @@ export interface BeadsmithAskBeadReview {
 		changeType: "created" | "modified" | "deleted"
 		linesAdded?: number
 		linesRemoved?: number
+		/** Per-file unified diff string */
+		diff?: string
+		/** Original file content (before change) for diff rendering */
+		oldContent?: string
+		/** New file content (after change) for diff rendering */
+		newContent?: string
 	}>
 	diff: string
 	impactSummary?: {

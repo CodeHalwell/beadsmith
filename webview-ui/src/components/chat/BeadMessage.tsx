@@ -32,6 +32,7 @@ import {
 import { memo, useCallback, useMemo, useState } from "react"
 import { cn } from "@/lib/utils"
 import { BeadServiceClient } from "@/services/grpc-client"
+import { BeadDiffViewer } from "./BeadDiffViewer"
 
 interface BeadMessageProps {
 	message: BeadsmithMessage
@@ -254,32 +255,20 @@ export const BeadReviewMessage = memo(({ message, isLast }: BeadMessageProps) =>
 							<FileTextIcon className="size-1.5" />
 							Files Changed ({info.filesChanged.length})
 						</div>
-						<ul className="text-xs opacity-80 space-y-0.5">
-							{info.filesChanged.slice(0, 5).map((file, i) => (
-								<li className="flex items-center gap-1.5" key={i}>
-									<span
-										className={cn(
-											"px-1 py-0.5 rounded text-[10px] font-medium",
-											file.changeType === "created" && "bg-success/20 text-success",
-											file.changeType === "modified" && "bg-link/20 text-link",
-											file.changeType === "deleted" && "bg-error/20 text-error",
-										)}>
-										{file.changeType}
-									</span>
-									<span className="truncate">{file.filePath}</span>
-									{(file.linesAdded || file.linesRemoved) && (
-										<span className="text-[10px] opacity-60">
-											{file.linesAdded && <span className="text-success">+{file.linesAdded}</span>}
-											{file.linesAdded && file.linesRemoved && " "}
-											{file.linesRemoved && <span className="text-error">-{file.linesRemoved}</span>}
-										</span>
-									)}
-								</li>
+						<div className="mt-1">
+							{info.filesChanged.map((file, i) => (
+								<BeadDiffViewer
+									changeType={file.changeType}
+									diff={file.diff}
+									fileName={file.filePath}
+									key={file.filePath ?? i}
+									linesAdded={file.linesAdded}
+									linesRemoved={file.linesRemoved}
+									newContent={file.newContent}
+									oldContent={file.oldContent}
+								/>
 							))}
-							{info.filesChanged.length > 5 && (
-								<li className="opacity-60">...and {info.filesChanged.length - 5} more</li>
-							)}
-						</ul>
+						</div>
 					</div>
 				)}
 
