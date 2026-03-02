@@ -20,6 +20,28 @@ from beadsmith_dag.models import (
 from beadsmith_dag.parsers.python_parser import PythonParser
 
 
+def _resolve_edges(nodes: list[GraphNode], edges: list[GraphEdge]) -> list[GraphEdge]:
+    """Resolve bare module names in edge targets to matching file node IDs.
+
+    The parser creates import edges with bare module names (e.g., to_node="module_a")
+    but file nodes use full paths (e.g., id="/tmp/.../module_a.py"). This helper maps
+    bare names to actual node IDs so the graph connects properly.
+    """
+    file_stem_to_id: dict[str, str] = {}
+    for node in nodes:
+        if node.type == NodeType.FILE:
+            stem = Path(node.file_path).stem
+            file_stem_to_id[stem] = node.id
+
+    resolved: list[GraphEdge] = []
+    for edge in edges:
+        to_node = edge.to_node
+        if to_node in file_stem_to_id:
+            to_node = file_stem_to_id[to_node]
+        resolved.append(edge.model_copy(update={"to_node": to_node}))
+    return resolved
+
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -493,9 +515,9 @@ def process():
         parser_b = PythonParser()
         nodes_b, edges_b = parser_b.parse_file(module_b)
 
-        # Combine and build graph
+        # Combine and build graph (resolve bare module names to file paths)
         all_nodes = nodes_a + nodes_b
-        all_edges = edges_a + edges_b
+        all_edges = _resolve_edges(all_nodes, edges_a + edges_b)
 
         builder = GraphBuilder()
         graph = builder.build(all_nodes, all_edges)
@@ -582,8 +604,9 @@ def test_serve():
         parser3 = PythonParser()
         nodes3, edges3 = parser3.parse_file(test_file)
 
+        # Combine and build graph (resolve bare module names to file paths)
         all_nodes = nodes1 + nodes2 + nodes3
-        all_edges = edges1 + edges2 + edges3
+        all_edges = _resolve_edges(all_nodes, edges1 + edges2 + edges3)
 
         builder = GraphBuilder()
         graph = builder.build(all_nodes, all_edges)

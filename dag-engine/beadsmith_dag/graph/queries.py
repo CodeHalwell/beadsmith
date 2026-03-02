@@ -92,8 +92,6 @@ class GraphQueries:
             current, depth = queue.pop(0)
 
             if current in visited:
-                # Detected a cycle
-                has_circular = True
                 continue
 
             visited.add(current)
@@ -112,7 +110,9 @@ class GraphQueries:
                 if confidence_order.get(edge_confidence, 0) < min_level:
                     continue
 
-                if pred not in visited:
+                if pred in visited:
+                    has_circular = True
+                elif max_depth is None or depth + 1 <= max_depth:
                     affected_nodes.add(pred)
                     queue.append((pred, depth + 1))
 
