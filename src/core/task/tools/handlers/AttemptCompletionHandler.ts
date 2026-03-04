@@ -168,6 +168,35 @@ export class AttemptCompletionHandler implements IToolHandler, IPartialBlockHand
 		// At this point we know: task is complete, checkpoint saved, result shown to user
 		await this.runTaskCompleteHook(config, block)
 
+		// Auto-save memories at task completion
+		if (config.services.memoryManager) {
+			try {
+				const messages = config.messageState
+					.getApiConversationHistory()
+					.map((m) => {
+						let content = ""
+						if (typeof m.content === "string") {
+							content = m.content
+						} else if (Array.isArray(m.content)) {
+							content = m.content
+								.filter((block): block is { type: "text"; text: string } => block.type === "text")
+								.map((block) => block.text)
+								.join("\n")
+						}
+						return { role: m.role, content: content.trim() }
+					})
+					.filter((m) => m.content.length > 0)
+
+				// Get changed files from task
+				const changedFiles = config.services.fileContextTracker.getAndClearRecentlyModifiedFiles()
+
+				await config.services.memoryManager.onTaskComplete(config.taskId, messages, changedFiles)
+				config.services.memoryManager.startCompactionTimer()
+			} catch (error) {
+				Logger.error("[AttemptCompletionHandler] Memory auto-save failed (non-fatal)", error)
+			}
+		}
+
 		// If bead mode is active, trigger bead completion flow
 		if (isBeadModeActive(config)) {
 			await this.handleBeadCompletion(config, result)

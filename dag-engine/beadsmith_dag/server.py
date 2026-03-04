@@ -5,11 +5,15 @@ accepting JSON-RPC 2.0 requests and returning responses.
 """
 
 import json
+import os
 import sys
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import structlog
+
+if TYPE_CHECKING:
+    from .memory.service import MemoryService
 
 from .analyser import ProjectAnalyser
 from .models import (
@@ -43,6 +47,7 @@ class DAGServer:
     def __init__(self) -> None:
         self.analyser = ProjectAnalyser()
         self.version = "0.1.0"
+        self._memory_service: "MemoryService | None" = None
 
     def handle_request(self, request: JsonRpcRequest) -> JsonRpcResponse:
         """Handle a JSON-RPC request.
@@ -90,6 +95,48 @@ class DAGServer:
             elif method == "get_edges_for_node":
                 result = self._handle_get_edges_for_node(params)
 
+            elif method == "memory.save":
+                result = self._handle_memory_save(params)
+
+            elif method == "memory.recall":
+                result = self._handle_memory_recall(params)
+
+            elif method == "memory.delete":
+                result = self._handle_memory_delete(params)
+
+            elif method == "memory.stats":
+                result = self._handle_memory_stats()
+
+            elif method == "memory.file_memories":
+                result = self._handle_memory_file_memories(params)
+
+            elif method == "memory.co_change":
+                result = self._handle_memory_co_change(params)
+
+            elif method == "memory.co_changes":
+                result = self._handle_memory_co_changes(params)
+
+            elif method == "memory.apply_decay":
+                result = self._handle_memory_apply_decay()
+
+            elif method == "memory.promote_tiers":
+                result = self._handle_memory_promote_tiers()
+
+            elif method == "memory.get_merge_candidates":
+                result = self._handle_memory_get_merge_candidates(params)
+
+            elif method == "memory.validate_merge":
+                result = self._handle_memory_validate_merge(params)
+
+            elif method == "memory.commit_merge":
+                result = self._handle_memory_commit_merge(params)
+
+            elif method == "memory.log_policy":
+                result = self._handle_memory_log_policy(params)
+
+            elif method == "memory.update_policy_outcome":
+                result = self._handle_memory_update_policy_outcome(params)
+
             else:
                 return JsonRpcResponse.error_response(
                     request.id,
@@ -99,6 +146,13 @@ class DAGServer:
 
             return JsonRpcResponse.success(request.id, result)
 
+        except ValueError as e:
+            logger.warning("Invalid parameter value", method=method, error=str(e))
+            return JsonRpcResponse.error_response(
+                request.id,
+                JsonRpcErrorCode.INVALID_PARAMS,
+                f"Invalid parameter value: {e}",
+            )
         except KeyError as e:
             logger.warning("Missing required parameter", method=method, param=str(e))
             return JsonRpcResponse.error_response(
@@ -239,6 +293,102 @@ class DAGServer:
 
         return {"incoming": incoming, "outgoing": outgoing}
 
+    # -- Memory service helpers ------------------------------------------------
+
+    def _get_memory_service(self) -> "MemoryService":
+        """Lazily initialize and return the memory service."""
+        if self._memory_service is None:
+            from .memory.service import MemoryService
+
+            db_dir = os.environ.get("BEADSMITH_DATA_DIR", os.path.expanduser("~/.beadsmith"))
+            os.makedirs(db_dir, exist_ok=True)
+            db_path = os.path.join(db_dir, "memory.db")
+            self._memory_service = MemoryService(db_path)
+            self._memory_service.initialize()
+        return self._memory_service
+
+    def _handle_memory_save(self, params: dict[str, Any]) -> dict[str, Any]:
+        """Handle memory.save request."""
+        svc = self._get_memory_service()
+        return svc.save(
+            content=params["content"],
+            memory_type=params["type"],
+            keywords=params.get("keywords", []),
+            source_task=params.get("source_task"),
+            source_file=params.get("source_file"),
+        )
+
+    def _handle_memory_recall(self, params: dict[str, Any]) -> dict[str, Any]:
+        """Handle memory.recall request."""
+        svc = self._get_memory_service()
+        return svc.recall(
+            query=params["query"],
+            top_k=params.get("top_k", 5),
+            memory_type=params.get("type"),
+        )
+
+    def _handle_memory_delete(self, params: dict[str, Any]) -> None:
+        """Handle memory.delete request."""
+        svc = self._get_memory_service()
+        svc.delete(params["id"])
+
+    def _handle_memory_stats(self) -> dict[str, Any]:
+        """Handle memory.stats request."""
+        svc = self._get_memory_service()
+        return svc.get_stats()
+
+    def _handle_memory_file_memories(self, params: dict[str, Any]) -> list[dict[str, Any]]:
+        """Handle memory.file_memories request."""
+        svc = self._get_memory_service()
+        return svc.get_file_memories(params["file"])
+
+    def _handle_memory_co_change(self, params: dict[str, Any]) -> None:
+        """Handle memory.co_change request."""
+        svc = self._get_memory_service()
+        svc.record_co_change(params["files"])
+
+    def _handle_memory_co_changes(self, params: dict[str, Any]) -> list[dict[str, Any]]:
+        """Handle memory.co_changes request."""
+        svc = self._get_memory_service()
+        return svc.get_co_changes(params["file"])
+
+    def _handle_memory_apply_decay(self) -> dict[str, int]:
+        """Handle memory.apply_decay request."""
+        svc = self._get_memory_service()
+        return svc.apply_decay()
+
+    def _handle_memory_promote_tiers(self) -> dict[str, int]:
+        """Handle memory.promote_tiers request."""
+        svc = self._get_memory_service()
+        return svc.promote_tiers()
+
+    def _handle_memory_get_merge_candidates(self, params: dict[str, Any]) -> dict[str, Any]:
+        """Handle memory.get_merge_candidates request."""
+        svc = self._get_memory_service()
+        return svc.get_merge_candidates(min_jaccard=params.get("min_jaccard", 0.4))
+
+    def _handle_memory_validate_merge(self, params: dict[str, Any]) -> dict[str, Any]:
+        """Handle memory.validate_merge request."""
+        svc = self._get_memory_service()
+        return svc.validate_merge(merged_content=params["merged_content"], source_ids=params["source_ids"])
+
+    def _handle_memory_commit_merge(self, params: dict[str, Any]) -> dict[str, Any]:
+        """Handle memory.commit_merge request."""
+        svc = self._get_memory_service()
+        return svc.commit_merge(merged_content=params["merged_content"], source_ids=params["source_ids"], keywords=params["keywords"], memory_type=params["type"])
+
+    def _handle_memory_log_policy(self, params: dict[str, Any]) -> dict[str, int]:
+        """Handle memory.log_policy request."""
+        svc = self._get_memory_service()
+        return svc.log_policy(decision=params["decision"], memory_id=params.get("memory_id"), context=params.get("context"))
+
+    def _handle_memory_update_policy_outcome(self, params: dict[str, Any]) -> None:
+        """Handle memory.update_policy_outcome request."""
+        svc = self._get_memory_service()
+        svc.update_policy_outcome(params["log_id"], params["outcome"])
+
+    # -- Server run loop -------------------------------------------------------
+
     def run(self) -> None:
         """Run the server, reading from stdin and writing to stdout.
 
@@ -278,6 +428,8 @@ class DAGServer:
                 )
                 print(error_response.model_dump_json(), flush=True)
 
+        if self._memory_service is not None:
+            self._memory_service.shutdown()
         logger.info("DAG server shutting down")
 
 

@@ -14,6 +14,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+memory = [
+    "sentence-transformers>=3.0",
+    "sqlite-vec>=0.1",
+]
 dev = [
     "pytest>=8.3",
     "pytest-asyncio>=0.24",

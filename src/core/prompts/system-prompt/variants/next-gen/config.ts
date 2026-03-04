@@ -42,6 +42,7 @@ export const config = createVariant(ModelFamily.NEXT_GEN)
 		SystemPromptSection.CLI_SUBAGENTS,
 		SystemPromptSection.CAPABILITIES,
 		SystemPromptSection.DAG_CONTEXT,
+		SystemPromptSection.AGENT_MEMORY,
 		SystemPromptSection.FEEDBACK,
 		SystemPromptSection.RULES,
 		SystemPromptSection.SYSTEM_INFO,
@@ -69,6 +70,8 @@ export const config = createVariant(ModelFamily.NEXT_GEN)
 		BeadsmithDefaultTool.TODO,
 		BeadsmithDefaultTool.GENERATE_EXPLANATION,
 		BeadsmithDefaultTool.USE_SKILL,
+		BeadsmithDefaultTool.SAVE_MEMORY,
+		BeadsmithDefaultTool.RECALL_MEMORY,
 	)
 	.placeholders({
 		MODEL_FAMILY: ModelFamily.NEXT_GEN,
