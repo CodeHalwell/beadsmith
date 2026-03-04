@@ -172,12 +172,20 @@ export class AttemptCompletionHandler implements IToolHandler, IPartialBlockHand
 		if (config.services.memoryManager) {
 			try {
 				const messages = config.messageState
-					.getBeadsmithMessages()
-					.filter((m) => m.text)
-					.map((m) => ({
-						role: m.type === "say" ? "assistant" : "user",
-						content: m.text ?? "",
-					}))
+					.getApiConversationHistory()
+					.map((m) => {
+						let content = ""
+						if (typeof m.content === "string") {
+							content = m.content
+						} else if (Array.isArray(m.content)) {
+							content = m.content
+								.filter((block): block is { type: "text"; text: string } => block.type === "text")
+								.map((block) => block.text)
+								.join("\n")
+						}
+						return { role: m.role, content: content.trim() }
+					})
+					.filter((m) => m.content.length > 0)
 
 				// Get changed files from task
 				const changedFiles = config.services.fileContextTracker.getAndClearRecentlyModifiedFiles()
