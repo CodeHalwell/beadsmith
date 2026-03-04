@@ -174,13 +174,15 @@ export class AttemptCompletionHandler implements IToolHandler, IPartialBlockHand
 				const messages = config.messageState
 					.getApiConversationHistory()
 					.map((m) => {
-						const content =
-							typeof m.content === "string"
-								? m.content
-								: m.content
-										.filter((block) => block.type === "text")
-										.map((block) => block.text)
-										.join("\n")
+						let content = ""
+						if (typeof m.content === "string") {
+							content = m.content
+						} else if (Array.isArray(m.content)) {
+							content = m.content
+								.filter((block): block is { type: "text"; text: string } => block.type === "text")
+								.map((block) => block.text)
+								.join("\n")
+						}
 						return { role: m.role, content: content.trim() }
 					})
 					.filter((m) => m.content.length > 0)
