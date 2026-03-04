@@ -33,8 +33,8 @@ vi.mock("@integrations/notifications", () => ({
 
 import type { MemoryManager } from "@core/memory/MemoryManager"
 
-describe("AttemptCompletionHandler memory integration", () => {
-	it("should call memoryManager.onTaskComplete when services has memoryManager", async () => {
+describe("AttemptCompletionHandler memory manager contract", () => {
+	it("defines the memory manager methods used by the handler", async () => {
 		const mockMemoryManager: Partial<MemoryManager> = {
 			onTaskComplete: vi.fn().mockResolvedValue(undefined),
 			startCompactionTimer: vi.fn(),

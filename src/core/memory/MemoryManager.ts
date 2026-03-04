@@ -70,13 +70,16 @@ export class MemoryManager {
 
 			for (const mem of toSave) {
 				// Dedup check: skip if a highly similar memory already exists
-				const existing = await this.bridge.recallMemory(mem.content)
+				const existing = await this.bridge.recallMemory({
+					query: mem.content,
+					topK: 1,
+				})
 				if (existing.results.some((r: any) => r.score > 0.9)) {
 					continue
 				}
 
 				try {
-					await this.bridge.saveMemory({
+					const saved = await this.bridge.saveMemory({
 						content: mem.content,
 						type: mem.type,
 						keywords: mem.keywords,
@@ -84,6 +87,7 @@ export class MemoryManager {
 					})
 					await this.bridge.logPolicy({
 						decision: "save",
+						memoryId: saved.id,
 						context: `Auto-extracted from task ${taskId}: ${mem.content.slice(0, 80)}`,
 					})
 				} catch (e) {

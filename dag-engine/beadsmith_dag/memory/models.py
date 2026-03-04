@@ -54,6 +54,7 @@ class PolicyDecision(str, Enum):
     SKIP = "skip"
     RETRIEVE = "retrieve"
     COMPACT = "compact"
+    PROMOTE = "promote"
 
 
 class MemoryRecord(BaseModel):

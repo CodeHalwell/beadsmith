@@ -168,6 +168,7 @@ class MemoryService:
         eligible: list[MemoryRecord] = []
         for tier in (MemoryTier.HOT, MemoryTier.WARM):
             eligible.extend(self.store.list_all(tier=tier, limit=10000))
+        eligible_by_id = {memory.id: memory for memory in eligible}
 
         by_type: dict[str, list[MemoryRecord]] = {}
         for mem in eligible:
@@ -203,8 +204,8 @@ class MemoryService:
                     pairs = 0
                     for gi in range(len(group_ids)):
                         for gj in range(gi + 1, len(group_ids)):
-                            mem_gi = next(m for m in eligible if m.id == group_ids[gi])
-                            mem_gj = next(m for m in eligible if m.id == group_ids[gj])
+                            mem_gi = eligible_by_id[group_ids[gi]]
+                            mem_gj = eligible_by_id[group_ids[gj]]
                             s1, s2 = set(mem_gi.keywords), set(mem_gj.keywords)
                             if s1 and s2:
                                 total_j += len(s1 & s2) / len(s1 | s2)

@@ -255,6 +255,17 @@ describe("AgentMemoryToolHandler", () => {
 			})
 		})
 
+		it("clamps top_k to minimum of 1", async () => {
+			const config = createMockConfig()
+			const block = createToolUse("recall_memory", { query: "test", top_k: "-1" })
+			await handler.execute(config, block)
+			expect(config.services.dagBridge.recallMemory).toHaveBeenCalledWith({
+				query: "test",
+				topK: 1,
+				type: undefined,
+			})
+		})
+
 		it("passes type filter", async () => {
 			const config = createMockConfig()
 			const block = createToolUse("recall_memory", { query: "test", type: "pattern" })
@@ -264,6 +275,14 @@ describe("AgentMemoryToolHandler", () => {
 				topK: 5,
 				type: "pattern",
 			})
+		})
+
+		it("returns error when type filter is invalid", async () => {
+			const config = createMockConfig()
+			const block = createToolUse("recall_memory", { query: "test", type: "invalid_type" })
+			const result = await handler.execute(config, block)
+			expect(result).toContain('Invalid memory type: "invalid_type"')
+			expect(config.services.dagBridge.recallMemory).not.toHaveBeenCalled()
 		})
 
 		it("returns no results message when empty", async () => {

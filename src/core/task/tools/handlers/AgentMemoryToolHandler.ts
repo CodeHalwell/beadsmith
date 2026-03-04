@@ -100,9 +100,18 @@ export class AgentMemoryToolHandler implements IToolHandler {
 			return await config.callbacks.sayAndCreateMissingParamError(BeadsmithDefaultTool.RECALL_MEMORY, "query")
 		}
 
+		if (type && !isValidMemoryType(type)) {
+			config.taskState.consecutiveMistakeCount++
+			const validTypes = Object.values(MemoryType).join(", ")
+			return formatResponse.toolError(
+				`Invalid memory type: "${type}". Must be one of: ${validTypes}.`,
+			)
+		}
+
 		config.taskState.consecutiveMistakeCount = 0
 
-		const topK = topKRaw ? Math.min(parseInt(topKRaw, 10) || 5, 20) : 5
+		const parsedTopK = topKRaw ? parseInt(topKRaw, 10) : 5
+		const topK = Math.max(1, Math.min(Number.isNaN(parsedTopK) ? 5 : parsedTopK, 20))
 
 		try {
 			const dagBridge = config.services.dagBridge

@@ -103,7 +103,13 @@ describe("MemoryManager", () => {
 			await manager.onTaskComplete("task-1", messages, [])
 			expect(mockApi.createMessage).toHaveBeenCalled()
 			expect(mockBridge.saveMemory).toHaveBeenCalled()
-			expect(mockBridge.logPolicy).toHaveBeenCalled()
+			expect(mockBridge.recallMemory).toHaveBeenCalledWith({
+				query: "This project uses biome for linting",
+				topK: 1,
+			})
+			expect(mockBridge.logPolicy).toHaveBeenCalledWith(
+				expect.objectContaining({ decision: "save", memoryId: "mem-1" }),
+			)
 		})
 
 		it("skips short conversations (< 5 messages)", async () => {
