@@ -144,6 +144,15 @@ export interface SystemPromptContext {
 			readonly unsafe?: number
 		}
 	}
+	// Agent memory context
+	readonly memoryEnabled?: boolean
+	readonly relevantMemories?: readonly {
+		readonly type: string
+		readonly content: string
+		readonly confidence: number
+		readonly accessCount: number
+		readonly keywords: readonly string[]
+	}[]
 }
 
 /**

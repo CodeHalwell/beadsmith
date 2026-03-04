@@ -43,6 +43,7 @@ export const config = createVariant(ModelFamily.GENERIC)
 		SystemPromptSection.CLI_SUBAGENTS,
 		SystemPromptSection.CAPABILITIES,
 		SystemPromptSection.DAG_CONTEXT,
+		SystemPromptSection.AGENT_MEMORY,
 		SystemPromptSection.RULES,
 		SystemPromptSection.SYSTEM_INFO,
 		SystemPromptSection.OBJECTIVE,
@@ -67,6 +68,8 @@ export const config = createVariant(ModelFamily.GENERIC)
 		BeadsmithDefaultTool.TODO,
 		BeadsmithDefaultTool.GENERATE_EXPLANATION,
 		BeadsmithDefaultTool.USE_SKILL,
+		BeadsmithDefaultTool.SAVE_MEMORY,
+		BeadsmithDefaultTool.RECALL_MEMORY,
 	)
 	.placeholders({
 		MODEL_FAMILY: "generic",

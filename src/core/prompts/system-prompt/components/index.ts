@@ -1,5 +1,6 @@
 import { SystemPromptSection } from "../templates/placeholders"
 import { getActVsPlanModeSection } from "./act_vs_plan_mode"
+import { getAgentMemorySection } from "./agent_memory"
 import { getAgentRoleSection } from "./agent_role"
 import { getBeadModeSection } from "./bead_mode"
 import { getCapabilitiesSection } from "./capabilities"
@@ -57,5 +58,6 @@ export function getSystemPromptComponents() {
 		{ id: SystemPromptSection.TASK_PROGRESS, fn: getUpdatingTaskProgress },
 		{ id: SystemPromptSection.DAG_CONTEXT, fn: getDagContextSection },
 		{ id: SystemPromptSection.BEAD_MODE, fn: getBeadModeSection },
+		{ id: SystemPromptSection.AGENT_MEMORY, fn: getAgentMemorySection },
 	]
 }

@@ -1,5 +1,7 @@
 import { ApiHandler } from "@core/api"
 import type { BeadManager } from "@core/beads"
+import type { DagBridge } from "@services/dag/DagBridge"
+import type { MemoryManager } from "@core/memory/MemoryManager"
 import { FileContextTracker } from "@core/context/context-tracking/FileContextTracker"
 import { getHooksEnabledSafe } from "@core/hooks/hooks-utils"
 import { BeadsmithIgnoreController } from "@core/ignore/BeadsmithIgnoreController"
@@ -32,6 +34,7 @@ import { AttemptCompletionHandler } from "./tools/handlers/AttemptCompletionHand
 import { BrowserToolHandler } from "./tools/handlers/BrowserToolHandler"
 import { CondenseHandler } from "./tools/handlers/CondenseHandler"
 import { ExecuteCommandToolHandler } from "./tools/handlers/ExecuteCommandToolHandler"
+import { AgentMemoryToolHandler, RecallMemoryAliasHandler } from "./tools/handlers/AgentMemoryToolHandler"
 import { GenerateExplanationToolHandler } from "./tools/handlers/GenerateExplanationToolHandler"
 import { ListCodeDefinitionNamesToolHandler } from "./tools/handlers/ListCodeDefinitionNamesToolHandler"
 import { ListFilesToolHandler } from "./tools/handlers/ListFilesToolHandler"
@@ -61,6 +64,12 @@ export class ToolExecutor {
 	/** Optional BeadManager for Ralph Wiggum loop pattern */
 	private beadManager?: BeadManager
 
+	/** Optional DagBridge for memory operations */
+	private dagBridge?: DagBridge
+
+	/** Optional MemoryManager for auto-save at task completion */
+	private memoryManager?: MemoryManager
+
 	/**
 	 * Set the BeadManager for bead mode task execution.
 	 * When set, tool handlers will record file changes and errors to the current bead.
@@ -74,6 +83,22 @@ export class ToolExecutor {
 	 */
 	public getBeadManager(): BeadManager | undefined {
 		return this.beadManager
+	}
+
+	/**
+	 * Set the DagBridge for memory tool operations.
+	 * When set, save_memory and recall_memory tools can communicate with the Python memory service.
+	 */
+	public setDagBridge(bridge: DagBridge): void {
+		this.dagBridge = bridge
+	}
+
+	/**
+	 * Set the MemoryManager for auto-save at task completion.
+	 * When set, task completion will trigger memory extraction and saving.
+	 */
+	public setMemoryManager(manager: MemoryManager): void {
+		this.memoryManager = manager
 	}
 
 	// Auto-approval methods using the AutoApprove class
@@ -198,6 +223,8 @@ export class ToolExecutor {
 				contextManager: this.contextManager,
 				stateManager: this.stateManager,
 				beadManager: this.beadManager,
+				dagBridge: this.dagBridge,
+				memoryManager: this.memoryManager,
 			},
 			callbacks: {
 				say: this.say,
@@ -273,6 +300,11 @@ export class ToolExecutor {
 		this.coordinator.register(new ReportBugHandler())
 		this.coordinator.register(new ApplyPatchHandler(validator))
 		this.coordinator.register(new GenerateExplanationToolHandler())
+
+		// Memory tools — shared handler for save_memory + recall_memory
+		const memoryHandler = new AgentMemoryToolHandler()
+		this.coordinator.register(memoryHandler)
+		this.coordinator.register(new RecallMemoryAliasHandler(memoryHandler))
 	}
 
 	/**

@@ -38,6 +38,7 @@ export const config = createVariant(ModelFamily.GEMINI_3)
 		SystemPromptSection.CAPABILITIES,
 		SystemPromptSection.EDITING_FILES,
 		SystemPromptSection.FEEDBACK,
+		SystemPromptSection.AGENT_MEMORY,
 		SystemPromptSection.TODO,
 		SystemPromptSection.TASK_PROGRESS,
 		SystemPromptSection.SYSTEM_INFO,
@@ -66,6 +67,8 @@ export const config = createVariant(ModelFamily.GEMINI_3)
 		BeadsmithDefaultTool.TODO,
 		BeadsmithDefaultTool.GENERATE_EXPLANATION,
 		BeadsmithDefaultTool.USE_SKILL,
+		BeadsmithDefaultTool.SAVE_MEMORY,
+		BeadsmithDefaultTool.RECALL_MEMORY,
 	)
 	.placeholders({
 		MODEL_FAMILY: ModelFamily.GEMINI_3,

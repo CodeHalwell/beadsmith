@@ -32,6 +32,8 @@ export enum BeadsmithDefaultTool {
 	APPLY_PATCH = "apply_patch",
 	GENERATE_EXPLANATION = "generate_explanation",
 	USE_SKILL = "use_skill",
+	SAVE_MEMORY = "save_memory",
+	RECALL_MEMORY = "recall_memory",
 }
 
 // Array of all tool names for compatibility
@@ -50,4 +52,5 @@ export const READ_ONLY_TOOLS = [
 	BeadsmithDefaultTool.WEB_SEARCH,
 	BeadsmithDefaultTool.WEB_FETCH,
 	BeadsmithDefaultTool.USE_SKILL,
+	BeadsmithDefaultTool.RECALL_MEMORY,
 ] as const

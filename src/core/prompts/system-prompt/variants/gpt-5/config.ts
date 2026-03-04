@@ -38,6 +38,7 @@ export const config = createVariant(ModelFamily.GPT_5)
 		SystemPromptSection.ACT_VS_PLAN,
 		SystemPromptSection.CLI_SUBAGENTS,
 		SystemPromptSection.CAPABILITIES,
+		SystemPromptSection.AGENT_MEMORY,
 		SystemPromptSection.FEEDBACK,
 		SystemPromptSection.RULES,
 		SystemPromptSection.SYSTEM_INFO,
@@ -65,6 +66,8 @@ export const config = createVariant(ModelFamily.GPT_5)
 		BeadsmithDefaultTool.TODO,
 		BeadsmithDefaultTool.GENERATE_EXPLANATION,
 		BeadsmithDefaultTool.USE_SKILL,
+		BeadsmithDefaultTool.SAVE_MEMORY,
+		BeadsmithDefaultTool.RECALL_MEMORY,
 	)
 	.placeholders({
 		MODEL_FAMILY: ModelFamily.GPT_5,

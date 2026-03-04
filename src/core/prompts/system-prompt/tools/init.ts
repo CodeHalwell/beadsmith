@@ -1,5 +1,6 @@
 // Import all tool variants
 import { BeadsmithToolSet } from "../registry/BeadsmithToolSet"
+import { recall_memory_variants, save_memory_variants } from "./agent_memory"
 import { access_mcp_resource_variants } from "./access_mcp_resource"
 import { act_mode_respond_variants } from "./act_mode_respond"
 import { apply_patch_variants } from "./apply_patch"
@@ -53,6 +54,8 @@ export function registerBeadsmithToolSets(): void {
 		...web_search_variants,
 		...write_to_file_variants,
 		...apply_patch_variants,
+		...save_memory_variants,
+		...recall_memory_variants,
 	]
 
 	// Register each variant

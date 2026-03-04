@@ -44,6 +44,7 @@ export const config = createVariant(ModelFamily.NATIVE_GPT_5_1)
 		SystemPromptSection.ACT_VS_PLAN,
 		SystemPromptSection.CLI_SUBAGENTS,
 		SystemPromptSection.CAPABILITIES,
+		SystemPromptSection.AGENT_MEMORY,
 		SystemPromptSection.FEEDBACK,
 		SystemPromptSection.RULES,
 		SystemPromptSection.SYSTEM_INFO,
@@ -72,6 +73,8 @@ export const config = createVariant(ModelFamily.NATIVE_GPT_5_1)
 		BeadsmithDefaultTool.TODO,
 		BeadsmithDefaultTool.GENERATE_EXPLANATION,
 		BeadsmithDefaultTool.USE_SKILL,
+		BeadsmithDefaultTool.SAVE_MEMORY,
+		BeadsmithDefaultTool.RECALL_MEMORY,
 	)
 	.placeholders({
 		MODEL_FAMILY: ModelFamily.NATIVE_GPT_5_1,

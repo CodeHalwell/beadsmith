@@ -24,6 +24,7 @@ import { sendPartialMessageEvent } from "@core/controller/ui/subscribeToPartialM
 import { getHooksEnabledSafe } from "@core/hooks/hooks-utils"
 import { executePreCompactHookWithCleanup, HookCancellationError, HookExecution } from "@core/hooks/precompact-executor"
 import { BeadsmithIgnoreController } from "@core/ignore/BeadsmithIgnoreController"
+import { MemoryManager } from "@core/memory/MemoryManager"
 import { parseMentions } from "@core/mentions"
 import { CommandPermissionController } from "@core/permissions"
 import { summarizeTask } from "@core/prompts/contextManagement"
@@ -584,6 +585,15 @@ export class Task {
 
 		// Initialize BeadManager if beads are enabled
 		this.initializeBeadManager()
+
+		// Wire up DagBridge for memory tool operations
+		const dagBridge = this.controller.getDagBridge()
+		if (dagBridge) {
+			this.toolExecutor.setDagBridge(dagBridge)
+
+			// Wire up MemoryManager for auto-save at task completion
+			this.toolExecutor.setMemoryManager(new MemoryManager(dagBridge, this.api))
+		}
 	}
 
 	/**
@@ -1976,6 +1986,47 @@ export class Task {
 			}
 		}
 
+		// Retrieve relevant memories if DAG bridge is running
+		let relevantMemories: SystemPromptContext["relevantMemories"]
+		const memoryEnabled = dagEnabled // Memory requires DAG engine (same Python process)
+
+		if (memoryEnabled) {
+			const dagBridge = this.controller.getDagBridge()
+			if (dagBridge?.isRunning()) {
+				try {
+					// Build a query from visible files and first user message
+					const queryParts: string[] = []
+					if (visibleTabPaths.length > 0) {
+						queryParts.push(...visibleTabPaths.slice(0, 3).map((p) => path.basename(p)))
+					}
+					const firstUserMessage = this.messageStateHandler.getApiConversationHistory().find((m) => m.role === "user")
+					if (firstUserMessage && typeof firstUserMessage.content === "string") {
+						queryParts.push(firstUserMessage.content.substring(0, 200))
+					}
+
+					if (queryParts.length > 0) {
+						const recallResponse = await dagBridge.recallMemory({
+							query: queryParts.join(" "),
+							topK: 5,
+						})
+
+						if (recallResponse.results.length > 0) {
+							relevantMemories = recallResponse.results.map((r) => ({
+								type: r.memory.type,
+								content: r.memory.content,
+								confidence: r.memory.confidence,
+								accessCount: r.memory.accessCount,
+								keywords: r.memory.keywords as string[],
+							}))
+						}
+					}
+				} catch (error) {
+					Logger.debug(`[Task ${this.taskId}] Failed to retrieve memories:`, error)
+					// Non-fatal — continue without memories
+				}
+			}
+		}
+
 		const promptContext: SystemPromptContext = {
 			cwd: this.cwd,
 			ide,
@@ -2008,6 +2059,8 @@ export class Task {
 			terminalExecutionMode: this.terminalExecutionMode,
 			dagEnabled,
 			dagImpact,
+			memoryEnabled,
+			relevantMemories,
 			// Bead (Ralph Loop) context
 			...(this.beadManager && this.beadManager.getState().status !== "idle"
 				? {

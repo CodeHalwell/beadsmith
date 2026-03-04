@@ -1,5 +1,7 @@
 import type { ApiHandler } from "@core/api"
 import type { BeadManager } from "@core/beads"
+import type { MemoryManager } from "@core/memory/MemoryManager"
+import type { DagBridge } from "@services/dag/DagBridge"
 import type { FileContextTracker } from "@core/context/context-tracking/FileContextTracker"
 import type { BeadsmithIgnoreController } from "@core/ignore/BeadsmithIgnoreController"
 import type { CommandPermissionController } from "@core/permissions"
@@ -82,6 +84,10 @@ export interface TaskServices {
 	stateManager: StateManager
 	/** BeadManager for Ralph Wiggum loop pattern (optional - only present in bead mode) */
 	beadManager?: BeadManager
+	/** DagBridge for memory operations (optional - only present when DAG engine is running) */
+	dagBridge?: DagBridge
+	/** MemoryManager for auto-save at task completion (optional - only when DAG engine is running) */
+	memoryManager?: MemoryManager
 }
 
 /**

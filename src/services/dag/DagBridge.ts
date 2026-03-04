@@ -6,6 +6,7 @@
  */
 
 import { Logger } from "@shared/services/Logger"
+import type { MergeCandidatesResponse, MergeValidationResult, MemoryRecord, MemoryStats, PolicyLogEntry, RecallResponse } from "@shared/memory-types"
 import { type ChildProcess, spawn, spawnSync } from "child_process"
 import { EventEmitter } from "events"
 import * as fs from "fs"
@@ -591,6 +592,161 @@ export class DagBridge extends EventEmitter {
 	async getEdgesForNode(nodeId: string): Promise<{ incoming: GraphEdge[]; outgoing: GraphEdge[] }> {
 		const result = await this.call("get_edges_for_node", { node_id: nodeId })
 		return result as { incoming: GraphEdge[]; outgoing: GraphEdge[] }
+	}
+
+	// -- Memory methods -------------------------------------------------------
+
+	/**
+	 * Save a memory to the persistent memory store.
+	 */
+	async saveMemory(params: {
+		content: string
+		type: string
+		keywords?: string[]
+		sourceTask?: string
+		sourceFile?: string
+	}): Promise<MemoryRecord> {
+		const result = await this.call("memory.save", {
+			content: params.content,
+			type: params.type,
+			keywords: params.keywords ?? [],
+			source_task: params.sourceTask,
+			source_file: params.sourceFile,
+		})
+		return result as MemoryRecord
+	}
+
+	/**
+	 * Recall memories matching a query.
+	 */
+	async recallMemory(params: { query: string; topK?: number; type?: string }): Promise<RecallResponse> {
+		const result = await this.call("memory.recall", {
+			query: params.query,
+			top_k: params.topK,
+			type: params.type,
+		})
+		return result as RecallResponse
+	}
+
+	/**
+	 * Delete a memory by ID.
+	 */
+	async deleteMemory(memoryId: string): Promise<void> {
+		await this.call("memory.delete", { id: memoryId })
+	}
+
+	/**
+	 * Get memory store statistics.
+	 */
+	async getMemoryStats(): Promise<MemoryStats> {
+		const result = await this.call("memory.stats", {})
+		return result as MemoryStats
+	}
+
+	/**
+	 * Get memories associated with a specific file.
+	 */
+	async getFileMemories(filePath: string): Promise<MemoryRecord[]> {
+		const result = await this.call("memory.file_memories", { file: filePath })
+		return result as MemoryRecord[]
+	}
+
+	/**
+	 * Record co-change relationship between files.
+	 */
+	async recordCoChange(filePaths: string[]): Promise<void> {
+		await this.call("memory.co_change", { files: filePaths })
+	}
+
+	/**
+	 * Get files frequently changed with the given file.
+	 */
+	async getCoChanges(filePath: string): Promise<Array<{ file: string; weight: number }>> {
+		const result = await this.call("memory.co_changes", { file: filePath })
+		return result as Array<{ file: string; weight: number }>
+	}
+
+	// -- Memory Phase 3 methods ---------------------------------------------------
+
+	/**
+	 * Promote memories across tiers based on access patterns.
+	 */
+	async promoteTiers(): Promise<{ promoted: number }> {
+		const result = await this.call("memory.promote_tiers", {})
+		return result as { promoted: number }
+	}
+
+	/**
+	 * Apply confidence decay to stale memories.
+	 */
+	async applyDecay(): Promise<{ updated: number }> {
+		const result = await this.call("memory.apply_decay", {})
+		return result as { updated: number }
+	}
+
+	/**
+	 * Get groups of memories that are candidates for merging.
+	 */
+	async getMergeCandidates(minJaccard?: number): Promise<MergeCandidatesResponse> {
+		const result = await this.call("memory.get_merge_candidates", {
+			min_jaccard: minJaccard ?? 0.4,
+		})
+		return result as MergeCandidatesResponse
+	}
+
+	/**
+	 * Validate a proposed merge of memories.
+	 */
+	async validateMerge(mergedContent: string, sourceIds: string[]): Promise<MergeValidationResult> {
+		const result = await this.call("memory.validate_merge", {
+			merged_content: mergedContent,
+			source_ids: sourceIds,
+		})
+		return result as MergeValidationResult
+	}
+
+	/**
+	 * Commit a validated merge, creating a new memory and retiring sources.
+	 */
+	async commitMerge(params: {
+		mergedContent: string
+		sourceIds: string[]
+		keywords: string[]
+		type: string
+	}): Promise<MemoryRecord> {
+		const result = await this.call("memory.commit_merge", {
+			merged_content: params.mergedContent,
+			source_ids: params.sourceIds,
+			keywords: params.keywords,
+			type: params.type,
+		})
+		return result as MemoryRecord
+	}
+
+	/**
+	 * Log a policy decision for auditing.
+	 */
+	async logPolicy(params: {
+		decision: string
+		memoryId?: string
+		context?: string
+	}): Promise<PolicyLogEntry> {
+		const result = await this.call("memory.log_policy", {
+			decision: params.decision,
+			memory_id: params.memoryId,
+			context: params.context,
+		})
+		return result as PolicyLogEntry
+	}
+
+	/**
+	 * Update the outcome of a previously logged policy decision.
+	 */
+	async updatePolicyOutcome(logId: number, outcome: string): Promise<void> {
+		await this.call("memory.update_policy_outcome", {
+			log_id: logId,
+			outcome,
+		})
 	}
 
 	/**
